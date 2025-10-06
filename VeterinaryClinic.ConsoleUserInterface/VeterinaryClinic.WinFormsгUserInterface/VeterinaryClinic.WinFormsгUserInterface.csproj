@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7A067AC7-4171-45E9-97AA-AB8E14F7B714}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>VeterinaryClinic.WinFormsгUserInterface</RootNamespace>
+    <AssemblyName>VeterinaryClinic.WinFormsгUserInterface</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OF\AddOwnerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OF\AddOwnerForm.Designer.cs">
+      <DependentUpon>AddOwnerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OF\EditOwnerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OF\EditOwnerForm.Designer.cs">
+      <DependentUpon>EditOwnerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OF\OwnerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OF\OwnerForm.Designer.cs">
+      <DependentUpon>OwnerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PF\AddPetForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PF\AddPetForm.Designer.cs">
+      <DependentUpon>AddPetForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PF\AppointmentForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PF\AppointmentForm.Designer.cs">
+      <DependentUpon>AppointmentForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PF\EditPetFoem.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PF\EditPetFoem.Designer.cs">
+      <DependentUpon>EditPetFoem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PF\PetForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PF\PetForm.Designer.cs">
+      <DependentUpon>PetForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PF\PetHistoryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PF\PetHistoryForm.Designer.cs">
+      <DependentUpon>PetHistoryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OF\AddOwnerForm.resx">
+      <DependentUpon>AddOwnerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OF\EditOwnerForm.resx">
+      <DependentUpon>EditOwnerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OF\OwnerForm.resx">
+      <DependentUpon>OwnerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PF\AddPetForm.resx">
+      <DependentUpon>AddPetForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PF\AppointmentForm.resx">
+      <DependentUpon>AppointmentForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PF\EditPetFoem.resx">
+      <DependentUpon>EditPetFoem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PF\PetForm.resx">
+      <DependentUpon>PetForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PF\PetHistoryForm.resx">
+      <DependentUpon>PetHistoryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VeterinaryClinic.Core\VeterinaryClinic.Core.csproj">
+      <Project>{56834e50-93c3-4c92-a3b1-901eef14f845}</Project>
+      <Name>VeterinaryClinic.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

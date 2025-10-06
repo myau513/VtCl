@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VeterinaryClinic.ConsoleUserInterface", "VeterinaryClinic.ConsoleUserInterface\VeterinaryClinic.ConsoleUserInterface.csproj", "{E33211FB-18B2-4F9C-A655-041A04D5E85E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VeterinaryClinic.Core", "VeterinaryClinic.Core\VeterinaryClinic.Core.csproj", "{56834E50-93C3-4C92-A3B1-901EEF14F845}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VeterinaryClinic.WinFormsгUserInterface", "VeterinaryClinic.WinFormsгUserInterface\VeterinaryClinic.WinFormsгUserInterface.csproj", "{7A067AC7-4171-45E9-97AA-AB8E14F7B714}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E33211FB-18B2-4F9C-A655-041A04D5E85E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E33211FB-18B2-4F9C-A655-041A04D5E85E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E33211FB-18B2-4F9C-A655-041A04D5E85E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E33211FB-18B2-4F9C-A655-041A04D5E85E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56834E50-93C3-4C92-A3B1-901EEF14F845}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56834E50-93C3-4C92-A3B1-901EEF14F845}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56834E50-93C3-4C92-A3B1-901EEF14F845}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56834E50-93C3-4C92-A3B1-901EEF14F845}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A067AC7-4171-45E9-97AA-AB8E14F7B714}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A067AC7-4171-45E9-97AA-AB8E14F7B714}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A067AC7-4171-45E9-97AA-AB8E14F7B714}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A067AC7-4171-45E9-97AA-AB8E14F7B714}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {34AE45A5-2CD8-41BD-855E-106EC9A89887}
+	EndGlobalSection
+EndGlobal

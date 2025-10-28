@@ -1,4 +1,4 @@
-﻿namespace VeterinaryClinic.WinForms.Forms.PetForms
+﻿namespace VeterinaryClinic.WinFormsUserInterface
 {
     partial class EditPetForm
     {
@@ -122,6 +122,11 @@
             this.Load += new System.EventHandler(this.EditPetForm_Load_1);
             this.ResumeLayout(false);
             this.PerformLayout();
+
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.Load += new System.EventHandler(this.EditPetForm_Load);
+
 
         }
 

@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using VeterinaryClinic.Core.Logic;
-using VeterinaryClinic.Core.Models;
+using VeterinaryClinic.Core.Essence;
 
 namespace VeterinaryClinic.WinFormsUserInterface
 {
@@ -41,6 +41,12 @@ namespace VeterinaryClinic.WinFormsUserInterface
 
         private void InitializeForm()
         {
+            foreach (var cb in GetAllCheckBoxes(this))
+            {
+                cb.AutoSize = false;
+                cb.Width = 80;  
+                cb.Height = 24;
+            }
             textBoxPetName.Text = selectedPet.Name;
             textBoxPetName.ReadOnly = true;
 
@@ -183,6 +189,19 @@ namespace VeterinaryClinic.WinFormsUserInterface
 
             Reason = textBoxReason.Text.Trim();
 
+            // дополнительная проверка в реальном времени
+            var actualAvailableSlots = clinicService.GetAvailableTimeSlots(SelectedVeterinarianId, SelectedDate);
+            int selectedHour = int.Parse(SelectedTime.Split('-')[0]);
+            bool slotFree = actualAvailableSlots.Any(slot =>
+                slot.Date == SelectedDate.Date &&
+                slot.Hour == selectedHour);
+
+            if (!slotFree)
+            {
+                MessageBox.Show("Выбранное время уже занято или недоступно. Пожалуйста, выберите другой слот.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             try
             {
                 clinicService.CreateAppointment(
@@ -203,6 +222,7 @@ namespace VeterinaryClinic.WinFormsUserInterface
                 MessageBox.Show("Ошибка при создании записи: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
         private void ShowSuccessMessage()
         {

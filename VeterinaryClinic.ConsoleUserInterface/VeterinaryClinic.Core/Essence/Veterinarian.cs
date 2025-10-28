@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VeterinaryClinic.Core.Models
+namespace VeterinaryClinic.Core.Essence
 {
     public class Veterinarian
     {
@@ -18,6 +18,11 @@ namespace VeterinaryClinic.Core.Models
             FullName = fullName;
             WorkDays = workDays;
         }
+
+        /// <summary>
+        /// Возвращает строковое представление ветеринара - его полное имя
+        /// </summary>
+        /// <returns>Полное имя ветеринара</returns>
 
         public override string ToString()
         {

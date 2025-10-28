@@ -3,70 +3,55 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using VeterinaryClinic.Core.Logic;
-using VeterinaryClinic.Core.Models;
+using VeterinaryClinic.Core.Essence;
 
 namespace VeterinaryClinic.WinFormsUserInterface
 {
     public partial class PetHistoryForm : Form
     {
-        private readonly PetManager petManager;
         private readonly Pet selectedPet;
+        private ClinicService clinicService;
         private List<Appointment> allAppointments;
 
-        public PetHistoryForm(PetManager petMgr, Pet pet, List<Appointment> appointments)
+        /// <summary>
+        /// Создает форму для просмотра истории посещений питомца
+        /// </summary>
+        /// <param name="clinicService">Сервис клиники для работы с данными</param>
+        /// <param name="pet">Питомец для просмотра истории</param>
+        /// <param name="appointments">Список записей на прием (может быть устаревшим)</param>
+        public PetHistoryForm(ClinicService clinicService, Pet pet, List<Appointment> appointments)
         {
-            InitializeComponent(); // ЭТО ВАЖНО - должен быть первым!
-            petManager = petMgr;
+            InitializeComponent(); 
+            this.clinicService = clinicService;
             selectedPet = pet;
             allAppointments = appointments;
         }
 
+        /// <summary>
+        /// Обрабатывает событие загрузки формы
+        /// Устанавливает имя питомца и загружает историю посещений
+        /// </summary>
+        /// <param name="sender">Источник события</param>
+        /// <param name="e">Данные события</param>
         private void PetHistoryForm_Load(object sender, EventArgs e)
         {
-            // Устанавливаем кличку питомца
             textBoxPetName.Text = selectedPet.Name;
-
-            // Загружаем данные
             LoadHistoryData();
         }
 
+        /// <summary>
+        /// Загружает историю посещений для выбранного питомца
+        /// Использует актуальные данные из сервиса, а не переданный список
+        /// </summary>
         private void LoadHistoryData()
         {
             try
             {
-                // Очищаем таблицу
                 dataGridViewHistory.Rows.Clear();
-
-                // ПРОВЕРКА ДАННЫХ - ВЫВОДИМ ВСЕ В КОНСОЛЬ
-                Console.WriteLine("=== ОТЛАДКА ===");
-                Console.WriteLine($"allAppointments: {allAppointments != null}");
-                Console.WriteLine($"Количество записей: {allAppointments?.Count ?? 0}");
-                Console.WriteLine($"ID питомца: {selectedPet.Id}");
-                Console.WriteLine($"Имя питомца: {selectedPet.Name}");
-
-                if (allAppointments == null || allAppointments.Count == 0)
-                {
-                    MessageBox.Show("Нет данных о записях!", "Информация",
-                                  MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-
-                // ВЫВОДИМ ВСЕ ЗАПИСИ ДЛЯ ОТЛАДКИ
-                Console.WriteLine("ВСЕ ЗАПИСИ:");
-                foreach (var app in allAppointments)
-                {
-                    Console.WriteLine($"PetId: {app.PetId}, Date: {app.AppointmentDate}, Time: {app.TimeSlot}, Reason: {app.Reason}");
-                }
-
-                // Получаем записи текущего питомца
-                var petAppointments = allAppointments
-                    .Where(a => a.PetId == selectedPet.Id)
-                    .OrderByDescending(a => a.AppointmentDate)
-                    .ToList();
+                var petAppointments = clinicService.GetAppointmentsByPetId(selectedPet.Id);
 
                 Console.WriteLine($"Найдено записей для питомца: {petAppointments.Count}");
 
-                // Заполняем таблицу
                 foreach (var appointment in petAppointments)
                 {
                     dataGridViewHistory.Rows.Add(
@@ -90,6 +75,11 @@ namespace VeterinaryClinic.WinFormsUserInterface
             }
         }
 
+        /// <summary>
+        /// Получает имя ветеринара по его ID
+        /// </summary>
+        /// <param name="veterinarianId">ID ветеринара</param>
+        /// <returns>Имя ветеринара или "Неизвестный врач"</returns>
         private string GetVeterinarianName(int veterinarianId)
         {
             switch (veterinarianId)
@@ -101,17 +91,34 @@ namespace VeterinaryClinic.WinFormsUserInterface
             }
         }
 
-        // СОБЫТИЯ КНОПОК - ДОЛЖНЫ БЫТЬ ПРИВЯЗАНЫ В ДИЗАЙНЕРЕ!
+        /// <summary>
+        /// Обрабатывает нажатие кнопки "Обновить"
+        /// Перезагружает данные истории посещений
+        /// </summary>
+        /// <param name="sender">Источник события</param>
+        /// <param name="e">Данные события</param>
         private void buttonRefresh_Click(object sender, EventArgs e)
         {
             LoadHistoryData();
         }
 
+        /// <summary>
+        /// Обрабатывает нажатие кнопки "Закрыть"
+        /// Закрывает текущую форму
+        /// </summary>
+        /// <param name="sender">Источник события</param>
+        /// <param name="e">Данные события</param>
         private void buttonClose_Click(object sender, EventArgs e)
         {
-            this.Close(); // ЭТО ДОЛЖНО РАБОТАТЬ!
+            this.Close();
         }
 
+        /// <summary>
+        /// Обрабатывает двойной клик по ячейке таблицы истории
+        /// Показывает детальную информацию о выбранной записи
+        /// </summary>
+        /// <param name="sender">Источник события</param>
+        /// <param name="e">Данные события (индекс строки и столбца)</param>
         private void dataGridViewHistory_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0 && dataGridViewHistory.Rows[e.RowIndex].Cells[0].Value != null)
@@ -128,9 +135,13 @@ namespace VeterinaryClinic.WinFormsUserInterface
             }
         }
 
+        /// <summary>
+        /// Обрабатывает изменение текста в поле имени питомца
+        /// </summary>
+        /// <param name="sender">Источник события</param>
+        /// <param name="e">Данные события</param>
         private void textBoxPetName_TextChanged(object sender, EventArgs e)
         {
-            // Пустой метод
         }
     }
 }

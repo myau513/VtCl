@@ -125,6 +125,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOwners)).EndInit();
             this.ResumeLayout(false);
 
+            this.btnBack.Click += btnBack_Click;
+            this.btnDeleteOwner.Click += btnDeleteOwner_Click;
+            this.btnEditOwner.Click += btnEditOwner_Click;
+            this.btnAddOwner.Click += btnAddOwner_Click;
         }
 
         #endregion

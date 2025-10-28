@@ -45,11 +45,11 @@
     <Compile Include="Logic\OwnerManager.cs" />
     <Compile Include="Logic\PetManager.cs" />
     <Compile Include="Logic\VeterinarianManager.cs" />
-    <Compile Include="Model\Appointment.cs" />
-    <Compile Include="Model\Owner.cs" />
-    <Compile Include="Model\Pet.cs" />
-    <Compile Include="Model\Veterinarian.cs" />
-    <Compile Include="Model\VisitHistory.cs" />
+    <Compile Include="Essence\Appointment.cs" />
+    <Compile Include="Essence\Owner.cs" />
+    <Compile Include="Essence\Pet.cs" />
+    <Compile Include="Essence\Veterinarian.cs" />
+    <Compile Include="Essence\VisitHistory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

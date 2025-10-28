@@ -1,4 +1,4 @@
-﻿namespace VeterinaryClinic.WinForms.Forms
+﻿namespace VeterinaryClinic.WinFormsUserInterface
 {
     partial class AddOwnerForm
     {
@@ -102,6 +102,10 @@
             this.Load += new System.EventHandler(this.AddOwnerForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
+
+            this.BtnAddOwner.Click += BtnAddOwner_Click;
+            this.BtnCancel.Click += BtnCancel_Click;
+            
 
         }
 

@@ -42,6 +42,7 @@
             this.btnShowSchedule.TabIndex = 7;
             this.btnShowSchedule.Text = "Расписание ветеринаров";
             this.btnShowSchedule.UseVisualStyleBackColor = true;
+            this.btnShowSchedule.Click += new System.EventHandler(this.btnShowSchedule_Click);
             // 
             // btnExit
             // 
@@ -51,6 +52,7 @@
             this.btnExit.TabIndex = 6;
             this.btnExit.Text = "Выход";
             this.btnExit.UseVisualStyleBackColor = true;
+            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
             // 
             // btnManageOwners
             // 
@@ -60,6 +62,7 @@
             this.btnManageOwners.TabIndex = 5;
             this.btnManageOwners.Text = "Хозяева";
             this.btnManageOwners.UseVisualStyleBackColor = true;
+            this.btnManageOwners.Click += new System.EventHandler(this.btnManageOwners_Click);
             // 
             // btnManagePets
             // 
@@ -69,6 +72,7 @@
             this.btnManagePets.TabIndex = 4;
             this.btnManagePets.Text = "Питомцы";
             this.btnManagePets.UseVisualStyleBackColor = true;
+            this.btnManagePets.Click += new System.EventHandler(this.btnManagePets_Click);
             // 
             // MainForm
             // 
@@ -80,8 +84,7 @@
             this.Controls.Add(this.btnManageOwners);
             this.Controls.Add(this.btnManagePets);
             this.Name = "MainForm";
-            this.Text = "Form1";
-            this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Load += new System.EventHandler(this.MainForm_Load_1);
             this.ResumeLayout(false);
 
         }

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using VeterinaryClinic.Core.Logic;
+using VeterinaryClinic.Core.Essence;
 using VeterinaryClinic.WinFormsUserInterface;
 
 namespace VeterinaryClinic.WinFormsUserInterface
@@ -16,39 +17,102 @@ namespace VeterinaryClinic.WinFormsUserInterface
     {
         private readonly OwnerManager ownerManager;
         private readonly PetManager petManager;
+        private readonly VeterinarianManager vetManager;
+
+        /// <summary>
+        /// Создает главную форму приложения ветеринарной клиники
+        /// Инициализирует менеджеры данных и сервисы
+        /// </summary>
         public MainForm()
         {
             InitializeComponent();
             ownerManager = new OwnerManager();
             petManager = new PetManager(ownerManager);
+            vetManager = new VeterinarianManager();
         }
+
+        private ClinicService clinicService;
+
+        /// <summary>
+        /// Инициализирует сервис клиники, если он еще не создан
+        /// Обеспечивает единый экземпляр сервиса для всех форм
+        /// </summary>
+        private void InitializeClinicService()
+        {
+            if (clinicService == null)
+            {
+                clinicService = new ClinicService(ownerManager, petManager, vetManager);
+            }
+        }
+
+        /// <summary>
+        /// Обрабатывает нажатие кнопки "Управление питомцами"
+        /// Открывает форму для работы с питомцами
+        /// </summary>
+        /// <param name="sender">Источник события</param>
+        /// <param name="e">Данные события</param>
         private void btnManagePets_Click(object sender, EventArgs e)
         {
-            PetForm petsForm = new PetForm(ownerManager, petManager);
+            InitializeClinicService();  // обеспечиваем инициализацию
+            PetForm petsForm = new PetForm(clinicService);
             petsForm.ShowDialog();
         }
 
+        /// <summary>
+        /// Обрабатывает нажатие кнопки "Управление владельцами"
+        /// Открывает форму для работы с владельцами животных
+        /// </summary>
+        /// <param name="sender">Источник события</param>
+        /// <param name="e">Данные события</param>
         private void btnManageOwners_Click(object sender, EventArgs e)
         {
-            OwnerForm ownersForm = new OwnerForm(ownerManager, petManager);
+            InitializeClinicService();
+            OwnerForm ownersForm = new OwnerForm(clinicService);
             ownersForm.ShowDialog();
         }
 
+        /// <summary>
+        /// Обрабатывает нажатие кнопки "Выход"
+        /// Завершает работу приложения
+        /// </summary>
+        /// <param name="sender">Источник события</param>
+        /// <param name="e">Данные события</param>
         private void btnExit_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
+        /// <summary>
+        /// Обрабатывает событие загрузки главной формы
+        /// </summary>
+        /// <param name="sender">Источник события</param>
+        /// <param name="e">Данные события</param>
         private void MainForm_Load(object sender, EventArgs e)
         {
 
         }
 
+        /// <summary>
+        /// Обрабатывает нажатие кнопки "Показать расписание"
+        /// Открывает форму с расписанием ветеринаров
+        /// </summary>
+        /// <param name="sender">Источник события</param>
+        /// <param name="e">Данные события</param>
         private void btnShowSchedule_Click(object sender, EventArgs e)
         {
             var clinicService = new ClinicService(ownerManager, petManager, new VeterinarianManager());
-            var scheduleForm = new VeterinaryClinic.WinForms.Forms.VetForm.VeterinarianScheduleForm(clinicService);
+            var scheduleForm = new VeterinarianScheduleForm(clinicService);
             scheduleForm.ShowDialog();
+        }
+
+        /// <summary>
+        /// Дополнительный обработчик загрузки формы (дублирующий)
+        /// </summary>
+        /// <param name="sender">Источник события</param>
+        /// <param name="e">Данные события</param>
+        private void MainForm_Load_1(object sender, EventArgs e)
+        {
+
         }
     }
 }

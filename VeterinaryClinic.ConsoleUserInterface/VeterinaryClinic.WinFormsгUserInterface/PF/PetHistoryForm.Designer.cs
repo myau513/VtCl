@@ -48,6 +48,7 @@
             this.buttonClose.TabIndex = 11;
             this.buttonClose.Text = "Закрыть";
             this.buttonClose.UseVisualStyleBackColor = true;
+            this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
             // 
             // buttonRefresh
             // 
@@ -57,6 +58,7 @@
             this.buttonRefresh.TabIndex = 10;
             this.buttonRefresh.Text = "Обновить";
             this.buttonRefresh.UseVisualStyleBackColor = true;
+            this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
             // 
             // dataGridViewHistory
             // 

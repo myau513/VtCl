@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VeterinaryClinic.Core.Models
+namespace VeterinaryClinic.Core.Essence
 {
     public class Owner
     {
@@ -19,6 +19,11 @@ namespace VeterinaryClinic.Core.Models
             PhoneNumber = phoneNumber;
         }
 
+        /// <summary>
+        /// Возвращает строковое представление владельца в формате "ФИО (телефон)"
+        /// </summary>
+        /// <returns>Строка с информацией о владельце</returns>
+        
         public override string ToString()
         {
             return $"{FullName} ({PhoneNumber})";

@@ -1,10 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using VeterinaryClinic.Core.Logic;
+using VeterinaryClinic.Core.Models;
+using VeterinaryClinic.WinFormsUserInterface;
 
-namespace VeterinaryClinic.WinFormsгUserInterface
+namespace VeterinaryClinic.WinFormsUserInterface
 {
     internal static class Program
     {

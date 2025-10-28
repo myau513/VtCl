@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VeterinaryClinic.Core.Models
+namespace VeterinaryClinic.Core.Essence
 {
     public class Appointment
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using VeterinaryClinic.Core.Models;
+using VeterinaryClinic.Core.Essence;
 
 namespace VeterinaryClinic.Core.Logic
 {
@@ -13,6 +13,12 @@ namespace VeterinaryClinic.Core.Logic
         private List<Owner> ownersList = new List<Owner>();
         private int nextOwnerId = 1;
 
+        /// <summary>
+        /// Создает нового владельца животного
+        /// </summary>
+        /// <param name="fullName">Полное имя владельца</param>
+        /// <param name="phoneNumber">Номер телефона владельца</param>
+        /// <returns>Созданный владелец</returns>
         public Owner CreateOwner(string fullName, string phoneNumber)
         {
             if (string.IsNullOrWhiteSpace(fullName))
@@ -27,16 +33,29 @@ namespace VeterinaryClinic.Core.Logic
             return newOwner;
         }
 
+        /// <summary>
+        /// Находит владельца по ID
+        /// </summary>
+        /// <param name="id">ID владельца</param>
+        /// <returns>Найденный владелец или null</returns>
         public Owner GetOwner(int id)
         {
             return ownersList.FirstOrDefault(owner => owner.Id == id);
         }
 
+        /// <summary>
+        /// Получает список всех владельцев
+        /// </summary>
+        /// <returns>Список всех владельцев</returns>
         public List<Owner> GetAllOwners()
         {
             return ownersList;
         }
 
+        /// <summary>
+        /// Обновляет информацию о владельце
+        /// </summary>
+        /// <param name="owner">Объект владельца с обновленными данными</param>
         public void UpdateOwner(Owner owner)
         {
             Owner existingOwner = GetOwner(owner.Id);
@@ -53,6 +72,11 @@ namespace VeterinaryClinic.Core.Logic
             existingOwner.PhoneNumber = owner.PhoneNumber.Trim();
         }
 
+        /// <summary>
+        /// Удаляет владельца по ID
+        /// </summary>
+        /// <param name="id">ID владельца для удаления</param>
+        /// <returns>True если удаление успешно, иначе False</returns>
         public bool DeleteOwner(int id)
         {
             Owner ownerToRemove = GetOwner(id);
@@ -69,6 +93,11 @@ namespace VeterinaryClinic.Core.Logic
             }
         }
 
+        /// <summary>
+        /// Ищет владельцев по имени (частичное совпадение без учета регистра)
+        /// </summary>
+        /// <param name="name">Имя или часть имени для поиска</param>
+        /// <returns>Список найденных владельцев</returns>
         public List<Owner> FindOwnersByName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -79,6 +108,11 @@ namespace VeterinaryClinic.Core.Logic
                 .ToList();
         }
 
+        /// <summary>
+        /// Проверяет существование владельца по ID
+        /// </summary>
+        /// <param name="id">ID владельца для проверки</param>
+        /// <returns>True если владелец существует, иначе False</returns>
         public bool OwnerExists(int id)
         {
             return ownersList.Any(owner => owner.Id == id);

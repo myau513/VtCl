@@ -1,4 +1,4 @@
-﻿namespace VeterinaryClinic.WinForms.Forms.OwnerForms
+﻿namespace VeterinaryClinic.WinFormsUserInterface
 {
     partial class EditOwnerForm
     {
@@ -102,6 +102,10 @@
             this.Load += new System.EventHandler(this.EditOwnerForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
+
+            this.BtnSave.Click += BtnSave_Click;
+            this.BtnCancel.Click += BtnCancel_Click;
+          
 
         }
 

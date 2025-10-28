@@ -187,6 +187,18 @@
             this.ResumeLayout(false);
             this.PerformLayout();
 
+            this.comboBoxOwners.SelectedIndexChanged += new System.EventHandler(this.comboBoxOwners_SelectedIndexChanged);
+
+            this.btnAddPet.Click += new System.EventHandler(this.btnAddPet_Click);
+            this.btnEditPet.Click += new System.EventHandler(this.btnEditPet_Click);
+            this.btnDeletePet.Click += new System.EventHandler(this.btnDeletePet_Click);
+            this.btnCreateAppointment.Click += new System.EventHandler(this.btnCreateAppointment_Click);
+            this.buttonShowHistory.Click += new System.EventHandler(this.buttonShowHistory_Click);
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
+
+            this.Load += new System.EventHandler(this.PetForm_Load);
+
+
         }
 
         #endregion

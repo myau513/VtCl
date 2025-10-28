@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using VeterinaryClinic.Core.Models;
+using VeterinaryClinic.Core.Essence;
 
 namespace VeterinaryClinic.Core.Logic
 {
@@ -14,11 +14,23 @@ namespace VeterinaryClinic.Core.Logic
         private int nextPetId = 1;
         private readonly OwnerManager ownerManager;
 
+        /// <summary>
+        /// Создает менеджер питомцев с ссылкой на менеджер владельцев
+        /// </summary>
+        /// <param name="ownerManager">Менеджер для проверки существования владельцев</param>
         public PetManager(OwnerManager ownerManager)
         {
             this.ownerManager = ownerManager;
         }
 
+        /// <summary>
+        /// Создает нового питомца
+        /// </summary>
+        /// <param name="name">Кличка питомца</param>
+        /// <param name="species">Вид животного</param>
+        /// <param name="breed">Порода животного</param>
+        /// <param name="ownerId">ID владельца</param>
+        /// <returns>Созданный питомец</returns>
         public Pet CreatePet(string name, string species, string breed, int ownerId)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -33,7 +45,6 @@ namespace VeterinaryClinic.Core.Logic
             if (!ownerManager.OwnerExists(ownerId))
                 throw new ArgumentException($"Владелец с ID {ownerId} не найден");
 
-            // PetService не может случайно удалить или изменить владельца
 
             Pet newPet = new Pet(nextPetId++, name.Trim(), species.Trim(), breed.Trim(), ownerId);
 
@@ -41,16 +52,29 @@ namespace VeterinaryClinic.Core.Logic
             return newPet;
         }
 
+        /// <summary>
+        /// Находит питомца по ID
+        /// </summary>
+        /// <param name="id">ID питомца</param>
+        /// <returns>Найденный питомец или null</returns>
         public Pet GetPet(int id)
         {
             return petsList.FirstOrDefault(pet => pet.Id == id);
         }
 
+        /// <summary>
+        /// Получает список всех питомцев
+        /// </summary>
+        /// <returns>Список всех питомцев</returns>
         public List<Pet> GetAllPets()
         {
             return petsList;
         }
 
+        /// <summary>
+        /// Обновляет информацию о питомце
+        /// </summary>
+        /// <param name="pet">Объект питомца с обновленными данными</param>
         public void UpdatePet(Pet pet)
         {
             Pet existingPet = GetPet(pet.Id);
@@ -75,6 +99,11 @@ namespace VeterinaryClinic.Core.Logic
             existingPet.OwnerId = pet.OwnerId;
         }
 
+        /// <summary>
+        /// Удаляет питомца по ID
+        /// </summary>
+        /// <param name="id">ID питомца для удаления</param>
+        /// <returns>True если удаление успешно, иначе False</returns>
         public bool DeletePet(int id)
         {
             Pet petToRemove = GetPet(id);
@@ -91,6 +120,11 @@ namespace VeterinaryClinic.Core.Logic
             }
         }
 
+        /// <summary>
+        /// Получает всех питомцев указанного владельца
+        /// </summary>
+        /// <param name="ownerId">ID владельца</param>
+        /// <returns>Список питомцев владельца</returns>
         public List<Pet> GetPetsByOwnerId(int ownerId)
         {
             if (!ownerManager.OwnerExists(ownerId))
@@ -99,6 +133,11 @@ namespace VeterinaryClinic.Core.Logic
             return petsList.Where(pet => pet.OwnerId == ownerId).ToList();
         }
 
+        /// <summary>
+        /// Проверяет существование питомца по ID
+        /// </summary>
+        /// <param name="id">ID питомца для проверки</param>
+        /// <returns>True если питомец существует, иначе False</returns>
         public bool PetExists(int id)
         {
             return petsList.Any(pet => pet.Id == id);

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using VeterinaryClinic.Core.Logic;
-using VeterinaryClinic.Core.Models;
+using VeterinaryClinic.Core.Essence;
 
 namespace VeterinaryClinic.WinFormsUserInterface
 {
@@ -10,6 +10,10 @@ namespace VeterinaryClinic.WinFormsUserInterface
     {
         private readonly ClinicService clinicService;
 
+        /// <summary>
+        /// Создает форму для работы с владельцами животных
+        /// </summary>
+        /// <param name="clinicService">Сервис клиники для работы с данными</param>
         public OwnerForm(ClinicService clinicService)
         {
             InitializeComponent();
@@ -18,6 +22,9 @@ namespace VeterinaryClinic.WinFormsUserInterface
             LoadOwners();
         }
 
+        /// <summary>
+        /// Загружает список всех владельцев из базы данных
+        /// </summary>
         private void LoadOwners()
         {
             try
@@ -40,6 +47,12 @@ namespace VeterinaryClinic.WinFormsUserInterface
             }
         }
 
+        /// <summary>
+        /// Обрабатывает нажатие кнопки "Добавить владельца"
+        /// Открывает форму добавления и сохраняет нового владельца
+        /// </summary>
+        /// <param name="sender">Источник события</param>
+        /// <param name="e">Данные события</param>
         private void btnAddOwner_Click(object sender, EventArgs e)
         {
             var addForm = new AddOwnerForm();
@@ -65,6 +78,12 @@ namespace VeterinaryClinic.WinFormsUserInterface
             }
         }
 
+        /// <summary>
+        /// Обрабатывает нажатие кнопки "Редактировать владельца"
+        /// Открывает форму редактирования и обновляет данные владельца
+        /// </summary>
+        /// <param name="sender">Источник события</param>
+        /// <param name="e">Данные события</param>
         private void btnEditOwner_Click(object sender, EventArgs e)
         {
             if (dataGridViewOwners.CurrentRow?.DataBoundItem is Owner selectedOwner)
@@ -92,6 +111,12 @@ namespace VeterinaryClinic.WinFormsUserInterface
             }
         }
 
+        /// <summary>
+        /// Обрабатывает нажатие кнопки "Удалить владельца"
+        /// Удаляет владельца после подтверждения (только если нет питомцев)
+        /// </summary>
+        /// <param name="sender">Источник события</param>
+        /// <param name="e">Данные события</param>
         private void btnDeleteOwner_Click(object sender, EventArgs e)
         {
             if (dataGridViewOwners.CurrentRow?.DataBoundItem is Owner selectedOwner)
@@ -130,11 +155,22 @@ namespace VeterinaryClinic.WinFormsUserInterface
             }
         }
 
+        /// <summary>
+        /// Обрабатывает нажатие кнопки "Назад"
+        /// Закрывает текущую форму
+        /// </summary>
+        /// <param name="sender">Источник события</param>
+        /// <param name="e">Данные события</param>
         private void btnBack_Click(object sender, EventArgs e)
         {
             Close();
         }
 
+        /// <summary>
+        /// Обрабатывает событие загрузки формы
+        /// </summary>
+        /// <param name="sender">Источник события</param>
+        /// <param name="e">Данные события</param>
         private void OwnerForm_Load(object sender, EventArgs e)
         {
 

@@ -123,6 +123,9 @@
             this.ResumeLayout(false);
             this.PerformLayout();
 
+            this.btnCancel.Click += btnCancel_Click;
+            this.btnAdd.Click += btnAdd_Click;
+            
         }
 
         #endregion

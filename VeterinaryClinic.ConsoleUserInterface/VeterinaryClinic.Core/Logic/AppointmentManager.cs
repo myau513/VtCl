@@ -12,6 +12,13 @@ namespace VeterinaryClinic.Core.Logic
         private List<Appointment> appointments = new List<Appointment>();
         private int nextAppointmentId = 1;
 
+        //private IRepository<Appointment> appointmentsRepo;
+        //public MyClass(IRepository<Appointment> appointmentsRepo)
+        //{
+        //    this.appointmentsRepo = appointmentsRepo;
+        //}
+
+
         public bool IsTimeSlotAvailable(int veterinarianId, DateTime dateTime)
         {
             var normalizedDateTime = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, 0, 0);

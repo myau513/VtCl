@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace VeterinaryClinic.Core.Essence
 {
-    public class Owner
+    public class Owner : IDomainObject
     {
+        public Guid Id_db { get; set; } = Guid.NewGuid();
         public int Id { get; set; }
         public string FullName { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;

@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Logic\AppointmentManager.cs" />
     <Compile Include="Logic\ClinicService.cs" />
     <Compile Include="Logic\OwnerManager.cs" />
     <Compile Include="Logic\PetManager.cs" />
@@ -50,6 +51,7 @@
     <Compile Include="Essence\Pet.cs" />
     <Compile Include="Essence\Veterinarian.cs" />
     <Compile Include="Essence\VisitHistory.cs" />
+    <Compile Include="Logic\VisitHistoryManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

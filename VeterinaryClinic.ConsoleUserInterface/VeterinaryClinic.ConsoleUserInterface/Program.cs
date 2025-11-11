@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using VeterinaryClinic.Core.Logic;
-using VeterinaryClinic.Core.Models;
+using VeterinaryClinic.Core.Essence;
 
 namespace VeterinaryClinic.ConsoleUserInterface
 {
@@ -118,12 +118,6 @@ namespace VeterinaryClinic.ConsoleUserInterface
                             Console.Write("Введите фамилию владельца для поиска: ");
                             string searchLastNameForDelete = Console.ReadLine();
 
-                            if (string.IsNullOrWhiteSpace(searchLastNameForDelete))
-                            {
-                                Console.WriteLine("Фамилия не может быть пустой!");
-                                break;
-                            }
-
                             List<Owner> foundOwnersForDelete = clinicService.FindOwnersByName(searchLastNameForDelete);
 
                             if (foundOwnersForDelete.Count == 0)
@@ -227,12 +221,6 @@ namespace VeterinaryClinic.ConsoleUserInterface
                             Console.Write("Введите фамилию владельца для поиска: ");
                             string searchLastName = Console.ReadLine();
 
-                            if (string.IsNullOrWhiteSpace(searchLastName))
-                            {
-                                Console.WriteLine("Фамилия не может быть пустой!");
-                                break;
-                            }
-
                             List<Owner> foundOwners = clinicService.FindOwnersByName(searchLastName);
 
                             if (foundOwners.Count == 0)
@@ -281,7 +269,6 @@ namespace VeterinaryClinic.ConsoleUserInterface
                             }
                             break;
 
-
                         case "2":
                             var pets = clinicService.GetAllPets();
                             if (pets.Count == 0)
@@ -299,12 +286,6 @@ namespace VeterinaryClinic.ConsoleUserInterface
                         case "3":
                             Console.Write("Введите фамилию владельца для поиска: ");
                             string searchOwnerName = Console.ReadLine();
-
-                            if (string.IsNullOrWhiteSpace(searchOwnerName))
-                            {
-                                Console.WriteLine("Фамилия не может быть пустой!");
-                                break;
-                            }
 
                             List<Owner> foundOwnersForPets = clinicService.FindOwnersByName(searchOwnerName);
 
@@ -349,16 +330,9 @@ namespace VeterinaryClinic.ConsoleUserInterface
                             }
                             break;
 
-
                         case "4":
                             Console.Write("Введите фамилию владельца для поиска: ");
                             string searchOwnerForDelete = Console.ReadLine();
-
-                            if (string.IsNullOrWhiteSpace(searchOwnerForDelete))
-                            {
-                                Console.WriteLine("Фамилия не может быть пустой!");
-                                break;
-                            }
 
                             List<Owner> foundOwnersForDelete = clinicService.FindOwnersByName(searchOwnerForDelete);
 
@@ -425,7 +399,6 @@ namespace VeterinaryClinic.ConsoleUserInterface
                             }
                             break;
 
-
                         case "5":
                             return;
 
@@ -465,17 +438,28 @@ namespace VeterinaryClinic.ConsoleUserInterface
                 return;
             }
 
-            Console.WriteLine("Выберите владельца:");
-            for (int i = 0; i < owners.Count; i++)
-                Console.WriteLine($"{i + 1}. {owners[i].FullName} ({owners[i].PhoneNumber})");
-
-            if (!int.TryParse(Console.ReadLine(), out int ownerIndex) || ownerIndex < 1 || ownerIndex > owners.Count)
+            // Если нашли несколько владельцев, предлагаем выбрать
+            Owner selectedOwner;
+            if (owners.Count == 1)
             {
-                Console.WriteLine("Неверный выбор.");
-                Console.ReadKey();
-                return;
+                selectedOwner = owners[0];
             }
-            var selectedOwner = owners[ownerIndex - 1];
+            else
+            {
+                Console.WriteLine("Найдено несколько владельцев:");
+                for (int i = 0; i < owners.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {owners[i].FullName} ({owners[i].PhoneNumber})");
+                }
+                Console.Write("Выберите номер владельца: ");
+                if (!int.TryParse(Console.ReadLine(), out int ownerIndex) || ownerIndex < 1 || ownerIndex > owners.Count)
+                {
+                    Console.WriteLine("Неверный выбор.");
+                    Console.ReadKey();
+                    return;
+                }
+                selectedOwner = owners[ownerIndex - 1];
+            }
 
             var pets = clinicService.GetPetsByOwnerId(selectedOwner.Id);
             if (pets.Count == 0)
@@ -485,17 +469,27 @@ namespace VeterinaryClinic.ConsoleUserInterface
                 return;
             }
 
-            Console.WriteLine("Выберите питомца:");
-            for (int i = 0; i < pets.Count; i++)
-                Console.WriteLine($"{i + 1}. {pets[i].Name} ({pets[i].Species} - {pets[i].Breed})");
-
-            if (!int.TryParse(Console.ReadLine(), out int petIndex) || petIndex < 1 || petIndex > pets.Count)
+            // Если у владельца несколько питомцев, выбираем одного
+            Pet selectedPet;
+            if (pets.Count == 1)
             {
-                Console.WriteLine("Неверный выбор.");
-                Console.ReadKey();
-                return;
+                selectedPet = pets[0];
             }
-            var selectedPet = pets[petIndex - 1];
+            else
+            {
+                Console.WriteLine("Выберите питомца:");
+                for (int i = 0; i < pets.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {pets[i].Name} ({pets[i].Species} - {pets[i].Breed})");
+                }
+                if (!int.TryParse(Console.ReadLine(), out int petIndex) || petIndex < 1 || petIndex > pets.Count)
+                {
+                    Console.WriteLine("Неверный выбор.");
+                    Console.ReadKey();
+                    return;
+                }
+                selectedPet = pets[petIndex - 1];
+            }
 
             Console.Write("Введите дату (гггг-мм-дд): ");
             if (!DateTime.TryParse(Console.ReadLine(), out DateTime date))
@@ -504,6 +498,15 @@ namespace VeterinaryClinic.ConsoleUserInterface
                 Console.ReadKey();
                 return;
             }
+
+            // Проверяем, что дата не в прошлом и не воскресенье
+            if (date.Date < DateTime.Today)
+            {
+                Console.WriteLine("Нельзя записаться на прошедшую дату.");
+                Console.ReadKey();
+                return;
+            }
+
             if (date.DayOfWeek == DayOfWeek.Sunday)
             {
                 Console.WriteLine("Воскресенье - выходной.");
@@ -519,6 +522,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
                 return;
             }
 
+            // Получаем доступные слоты
             var slots = clinicService.GetAvailableTimeSlots(vet.Id, date);
             if (slots.Count == 0)
             {
@@ -529,7 +533,9 @@ namespace VeterinaryClinic.ConsoleUserInterface
 
             Console.WriteLine("Выберите время:");
             for (int i = 0; i < slots.Count; i++)
+            {
                 Console.WriteLine($"{i + 1}. {slots[i]:HH:mm}");
+            }
 
             if (!int.TryParse(Console.ReadLine(), out int slotIndex) || slotIndex < 1 || slotIndex > slots.Count)
             {
@@ -574,78 +580,43 @@ namespace VeterinaryClinic.ConsoleUserInterface
 
             Console.Write("Введите ФИО владельца: ");
             string ownerName = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(ownerName))
+
+            try
             {
-                Console.WriteLine("ФИО не может быть пустым.");
-                Console.ReadKey();
-                return;
-            }
+                var history = clinicService.GetVisitHistoryByOwner(ownerName);
+                var owner = clinicService.FindOwnersByName(ownerName).First();
+                var pets = clinicService.GetPetsByOwnerId(owner.Id);
+                var pet = pets.First(); // Берем первого питомца, т.к. метод работает с одним питомцем
 
-            var owners = clinicService.FindOwnersByName(ownerName);
-            if (owners.Count == 0)
-            {
-                Console.WriteLine("Владельцы не найдены.");
-                Console.ReadKey();
-                return;
-            }
+                Console.Clear();
+                Console.WriteLine($"История визитов питомца {pet.Name}:\n");
 
-            Console.WriteLine("Выберите владельца:");
-            for (int i = 0; i < owners.Count; i++)
-                Console.WriteLine($"{i + 1}. {owners[i].FullName}");
-
-            if (!int.TryParse(Console.ReadLine(), out int ownerIndex) || ownerIndex < 1 || ownerIndex > owners.Count)
-            {
-                Console.WriteLine("Неверный выбор.");
-                Console.ReadKey();
-                return;
-            }
-            var selectedOwner = owners[ownerIndex - 1];
-
-            var pets = clinicService.GetPetsByOwnerId(selectedOwner.Id);
-            if (pets.Count == 0)
-            {
-                Console.WriteLine("У владельца нет питомцев.");
-                Console.ReadKey();
-                return;
-            }
-
-            Console.WriteLine("Выберите питомца:");
-            for (int i = 0; i < pets.Count; i++)
-                Console.WriteLine($"{i + 1}. {pets[i].Name}");
-
-            if (!int.TryParse(Console.ReadLine(), out int petIndex) || petIndex < 1 || petIndex > pets.Count)
-            {
-                Console.WriteLine("Неверный выбор.");
-                Console.ReadKey();
-                return;
-            }
-            var selectedPet = pets[petIndex - 1];
-
-            var history = clinicService.GetVisitHistoryByPet(selectedPet.Id);
-
-            Console.Clear();
-            Console.WriteLine($"История визитов питомца {selectedPet.Name}:\n");
-
-            if (history.Count == 0)
-            {
-                Console.WriteLine("История визитов пуста.");
-            }
-            else
-            {
-                foreach (var visit in history)
+                if (history.Count == 0)
                 {
-                    Console.WriteLine($"Дата: {visit.VisitDate:dd.MM.yyyy HH:mm}");
-                    Console.WriteLine($"Врач: {visit.VeterinarianName}");
-                    Console.WriteLine($"Причина: {visit.Reason}");
-                    if (!string.IsNullOrEmpty(visit.Diagnosis))
-                        Console.WriteLine($"Диагноз: {visit.Diagnosis}");
-                    if (!string.IsNullOrEmpty(visit.Treatment))
-                        Console.WriteLine($"Лечение: {visit.Treatment}");
-                    if (!string.IsNullOrEmpty(visit.Notes))
-                        Console.WriteLine($"Заметки: {visit.Notes}");
-                    Console.WriteLine(new string('-', 40));
+                    Console.WriteLine("История визитов пуста.");
+                }
+                else
+                {
+                    foreach (var visit in history)
+                    {
+                        Console.WriteLine($"Дата: {visit.VisitDate:dd.MM.yyyy HH:mm}");
+                        Console.WriteLine($"Врач: {visit.VeterinarianName}");
+                        Console.WriteLine($"Причина: {visit.Reason}");
+                        if (!string.IsNullOrEmpty(visit.Diagnosis))
+                            Console.WriteLine($"Диагноз: {visit.Diagnosis}");
+                        if (!string.IsNullOrEmpty(visit.Treatment))
+                            Console.WriteLine($"Лечение: {visit.Treatment}");
+                        if (!string.IsNullOrEmpty(visit.Notes))
+                            Console.WriteLine($"Заметки: {visit.Notes}");
+                        Console.WriteLine(new string('-', 40));
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ошибка: " + ex.Message);
+            }
+
             Console.WriteLine("Нажмите любую клавишу для возврата...");
             Console.ReadKey();
         }
@@ -663,55 +634,62 @@ namespace VeterinaryClinic.ConsoleUserInterface
                 return;
             }
 
-            var appointments = clinicService.GetAppointmentsByDate(date);
-            var veterinarians = clinicService.GetAllVeterinarians();
-
-            Console.WriteLine($"\nРасписание на {date:dd.MM.yyyy}:\n");
-
-            // Заголовок
-            Console.Write("Время     ");
-            foreach (var vet in veterinarians)
+            try
             {
-                if (vet.WorkDays.Contains(date.DayOfWeek))
-                    Console.Write($"| {vet.FullName,-12} ");
-            }
-            Console.WriteLine();
+                var scheduleData = clinicService.GetScheduleData(date);
+                var appointments = scheduleData.Appointments;
+                var veterinarians = scheduleData.Veterinarians;
 
-            Console.Write(new string('-', 10));
-            foreach (var vet in veterinarians)
-            {
-                if (vet.WorkDays.Contains(date.DayOfWeek))
-                    Console.Write($"+{new string('-', 14)}");
-            }
-            Console.WriteLine();
+                Console.WriteLine($"\nРасписание на {date:dd.MM.yyyy}:\n");
 
-            for (int hour = 10; hour < 19; hour++)
-            {
-                var timeSlot = new DateTime(date.Year, date.Month, date.Day, hour, 0, 0);
-                Console.Write($"{timeSlot:HH:mm}     ");
-
+                // Заголовок
+                Console.Write("Время     ");
                 foreach (var vet in veterinarians)
                 {
                     if (vet.WorkDays.Contains(date.DayOfWeek))
-                    {
-                        var appointment = appointments.Find(a => a.VeterinarianId == vet.Id && a.AppointmentDate == timeSlot);
-                        if (appointment != null)
-                        {
-                            var pet = clinicService.GetPetsByOwnerId(appointment.PetId);
-                            var petName = clinicService.GetAllPets().Find(p => p.Id == appointment.PetId)?.Name ?? "Неизвестен";
-                            Console.Write($"| {petName} ({appointment.Reason})  ");
-                        }
-                        else
-                        {
-                            Console.Write("| [СВОБОДНО]    ");
-                        }
-                    }
+                        Console.Write($"| {vet.FullName,-12} ");
                 }
                 Console.WriteLine();
+
+                Console.Write(new string('-', 10));
+                foreach (var vet in veterinarians)
+                {
+                    if (vet.WorkDays.Contains(date.DayOfWeek))
+                        Console.Write($"+{new string('-', 14)}");
+                }
+                Console.WriteLine();
+
+                for (int hour = 10; hour < 19; hour++)
+                {
+                    var timeSlot = new DateTime(date.Year, date.Month, date.Day, hour, 0, 0);
+                    Console.Write($"{timeSlot:HH:mm}     ");
+
+                    foreach (var vet in veterinarians)
+                    {
+                        if (vet.WorkDays.Contains(date.DayOfWeek))
+                        {
+                            var appointment = appointments.Find(a => a.VeterinarianId == vet.Id && a.AppointmentDate == timeSlot);
+                            if (appointment != null)
+                            {
+                                var petName = clinicService.GetPet(appointment.PetId)?.Name ?? "Неизвестен";
+                                Console.Write($"| {petName} ({appointment.Reason})  ");
+                            }
+                            else
+                            {
+                                Console.Write("| [СВОБОДНО]    ");
+                            }
+                        }
+                    }
+                    Console.WriteLine();
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ошибка: " + ex.Message);
+            }
+
             Console.WriteLine("Нажмите любую клавишу для возврата...");
             Console.ReadKey();
         }
     }
 }
-

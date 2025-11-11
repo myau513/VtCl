@@ -13,12 +13,8 @@
         "packagesPath": "C:\\Users\\настя\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\настя\\source\\repos\\VetClinic_Repo\\VtCl\\VeterinaryClinic.ConsoleUserInterface\\VeterinaryClinic.ConsoleUserInterface\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
           "C:\\Users\\настя\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

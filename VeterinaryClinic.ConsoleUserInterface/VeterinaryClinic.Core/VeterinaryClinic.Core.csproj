@@ -63,6 +63,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTO\AppointmentDto.cs" />
+    <Compile Include="DTO\OwnerDto.cs" />
+    <Compile Include="DTO\PetDto.cs" />
+    <Compile Include="DTO\VeterinarianDto.cs" />
+    <Compile Include="DTO\VisitHistoryDto.cs" />
     <Compile Include="IDomainObject.cs" />
     <Compile Include="Logic\AppointmentManager.cs" />
     <Compile Include="Logic\ClinicService.cs" />
@@ -75,12 +80,18 @@
     <Compile Include="Essence\Veterinarian.cs" />
     <Compile Include="Essence\VisitHistory.cs" />
     <Compile Include="Logic\VisitHistoryManager.cs" />
+    <Compile Include="Mapper\AppointmentMapper.cs" />
+    <Compile Include="Mapper\OwnerMapper.cs" />
+    <Compile Include="Mapper\PetMapper.cs" />
+    <Compile Include="Mapper\VeterinarianMapper.cs" />
+    <Compile Include="Mapper\VisitHistoryMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

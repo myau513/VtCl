@@ -1,245 +1,227 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using VeterinaryClinic.Core.DTO;
 using VeterinaryClinic.Core.Essence;
+using VeterinaryClinic.Core.Mapper;
 
 namespace VeterinaryClinic.Core.Logic
 {
     public class ClinicService
     {
-        private readonly OwnerManager ownerManager;
-        private readonly PetManager petManager;
-        private readonly VeterinarianManager vetManager;
-        private readonly AppointmentManager appointmentManager;
-        private readonly VisitHistoryManager visitHistoryManager;
+        private readonly OwnerManager _ownerManager;
+        private readonly PetManager _petManager;
+        private readonly VeterinarianManager _vetManager;
+        private readonly AppointmentManager _appointmentManager;
+        private readonly VisitHistoryManager _visitHistoryManager;
 
-        /// <summary>
-        /// Создает новый сервис клиники с менеджерами владельцев, питомцев и ветеринаров
-        /// </summary>
-        /// <param name="ownerManager">Менеджер для работы с владельцами</param>
-        /// <param name="petManager">Менеджер для работы с питомцами</param>
-        /// <param name="vetManager">Менеджер для работы с ветеринарами</param>
-        public ClinicService(OwnerManager ownerManager, PetManager petManager, VeterinarianManager vetManager)
+        public ClinicService()
         {
-            this.ownerManager = ownerManager;
-            this.petManager = petManager;
-            this.vetManager = vetManager;
-            this.appointmentManager = new AppointmentManager();
-            this.visitHistoryManager = new VisitHistoryManager();
+            _ownerManager = new OwnerManager();
+            _petManager = new PetManager(_ownerManager);
+            _vetManager = new VeterinarianManager();
+            _appointmentManager = new AppointmentManager();
+            _visitHistoryManager = new VisitHistoryManager();
         }
 
-        // === Базовые методы для владельцев ===
-
-        public Owner CreateOwner(string fullName, string phoneNumber) =>
-            ownerManager.CreateOwner(fullName, phoneNumber);
-
-        public List<Owner> FindOwnersByName(string name) =>
-            ownerManager.FindOwnersByName(name);
-
-        public List<Owner> GetAllOwners() =>
-            ownerManager.GetAllOwners();
-
-        public void UpdateOwner(Owner owner) =>
-            ownerManager.UpdateOwner(owner);
-
-        public bool DeleteOwner(int ownerId) =>
-            ownerManager.DeleteOwner(ownerId);
-
-        // === Базовые методы для питомцев ===
-
-        public Pet CreatePet(string name, string species, string breed, int ownerId) =>
-            petManager.CreatePet(name, species, breed, ownerId);
-
-        public List<Pet> GetPetsByOwnerId(int ownerId) =>
-            petManager.GetPetsByOwnerId(ownerId);
-
-        public List<Pet> GetAllPets() =>
-            petManager.GetAllPets();
-
-        public void UpdatePet(Pet pet) =>
-            petManager.UpdatePet(pet);
-
-        public bool DeletePet(int petId) =>
-            petManager.DeletePet(petId);
-
-        // === Базовые методы для ветеринаров ===
-
-        public Veterinarian GetVeterinarianByDay(DayOfWeek day) =>
-            vetManager.GetVeterinarianByDay(day);
-
-        public List<Veterinarian> GetAllVeterinarians() =>
-            vetManager.GetAllVeterinarians();
-
-        // === Комплексные бизнес-методы (вынесенные из консольного приложения) ===
-
-        /// <summary>
-        /// Удаляет владельца и всех его питомцев
-        /// </summary>
-        public bool DeleteOwnerWithPets(int ownerId)
+        // === Владельцы ===
+        public Owner CreateOwner(string fullName, string phoneNumber)
         {
-            var pets = petManager.GetPetsByOwnerId(ownerId);
+            var ownerDto = _ownerManager.CreateOwner(fullName, phoneNumber);
+            return OwnerMapper.ToDomain(ownerDto);
+        }
+
+        public List<Owner> FindOwnersByName(string name)
+        {
+            var allOwners = _ownerManager.GetAllOwners();
+            var filteredOwners = allOwners
+                .Where(o => o.FullName.IndexOf(name, StringComparison.OrdinalIgnoreCase) >= 0)
+                .ToList();
+
+            return filteredOwners.Select(OwnerMapper.ToDomain).ToList();
+        }
+
+        public List<Owner> GetAllOwners()
+        {
+            return _ownerManager.GetAllOwners()
+                .Select(OwnerMapper.ToDomain)
+                .ToList();
+        }
+
+        public void UpdateOwner(Owner owner)
+        {
+            var ownerDto = OwnerMapper.ToDto(owner);
+            _ownerManager.UpdateOwner(ownerDto);
+        }
+
+        public bool DeleteOwner(Guid ownerId)
+        {
+            try
+            {
+                _ownerManager.DeleteOwner(ownerId);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        // === Питомцы ===
+        public Pet CreatePet(string name, string species, string breed, Guid ownerId)
+        {
+            var petDto = _petManager.CreatePet(name, species, breed, ownerId);
+            return PetMapper.ToDomain(petDto);
+        }
+
+        public List<Pet> GetPetsByOwnerId(Guid ownerId)
+        {
+            return _petManager.GetPetsByOwner(ownerId)
+                .Select(PetMapper.ToDomain)
+                .ToList();
+        }
+
+        public List<Pet> GetAllPets()
+        {
+            return _petManager.GetAllPets()
+                .Select(PetMapper.ToDomain)
+                .ToList();
+        }
+
+        public void UpdatePet(Pet pet)
+        {
+            var petDto = PetMapper.ToDto(pet);
+            _petManager.UpdatePet(petDto);
+        }
+
+        public bool DeletePet(Guid petId)
+        {
+            try
+            {
+                _petManager.DeletePet(petId);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        // === Ветеринары ===
+        public Veterinarian GetVeterinarianByDay(DayOfWeek day)
+        {
+            var allVets = _vetManager.GetAllVeterinarians();
+            var vetDto = allVets.FirstOrDefault(v =>
+                v.WorkDaysString.Split(',').Contains(day.ToString()));
+
+            if (vetDto == null) return null;
+
+            return VeterinarianMapper.ToDomain(vetDto);
+        }
+
+        public List<Veterinarian> GetAllVeterinarians()
+        {
+            return _vetManager.GetAllVeterinarians()
+                .Select(VeterinarianMapper.ToDomain)
+                .ToList();
+        }
+
+        // === Комплексные бизнес-методы ===
+        public bool DeleteOwnerWithPets(Guid ownerId)
+        {
+            var pets = GetPetsByOwnerId(ownerId);
             foreach (var pet in pets)
             {
-                petManager.DeletePet(pet.Id);
+                DeletePet(pet.Id);
             }
-            return ownerManager.DeleteOwner(ownerId);
+            return DeleteOwner(ownerId);
         }
 
-        /// <summary>
-        /// Получает список доступных временных слотов для ветеринара на указанную дату
-        /// </summary>
-        public List<DateTime> GetAvailableTimeSlots(int vetId, DateTime date)
+        public List<DateTime> GetAvailableTimeSlots(Guid vetId, DateTime date)
         {
             var availableSlots = new List<DateTime>();
             for (int hour = 10; hour < 19; hour++)
             {
                 var slot = new DateTime(date.Year, date.Month, date.Day, hour, 0, 0);
-                if (appointmentManager.IsTimeSlotAvailable(vetId, slot))
+                if (_appointmentManager.IsTimeSlotAvailable(vetId, slot))
                     availableSlots.Add(slot);
             }
             return availableSlots;
         }
 
-        /// <summary>
-        /// Создает запись на прием с автоматической проверкой бизнес-правил
-        /// </summary>
-        public Appointment CreateAppointment(int petId, int vetId, DateTime appointmentDate, string timeSlot, string reason, string breed)
+        public Appointment CreateAppointment(Guid petId, Guid vetId, DateTime appointmentDate,
+                                       string timeSlot, string reason, string breed)
         {
-            var appointment = appointmentManager.CreateAppointment(petId, vetId, appointmentDate, timeSlot, reason, breed);
+            var appointmentDto = _appointmentManager.CreateAppointment(petId, vetId, appointmentDate, timeSlot, reason, breed);
 
-            // Автоматически добавляем в историю посещений
-            var vet = vetManager.GetVeterinarian(vetId);
-            visitHistoryManager.AddToVisitHistory(petId, vet.FullName, appointmentDate, reason);
+            // Создаем запись в истории визитов
+            var vet = GetVeterinarian(vetId);
+            _visitHistoryManager.CreateVisitHistory(petId, vet.FullName, appointmentDate, reason);
 
-            return appointment;
+            return AppointmentMapper.ToDomain(appointmentDto);
         }
 
-        /// <summary>
-        /// Создает комплексную запись на прием с поиском по имени владельца
-        /// </summary>
-        public Appointment CreateAppointmentForOwner(string ownerName, DateTime date, string reason = "Плановый осмотр")
+        // === Вспомогательные методы ===
+        public Pet GetPet(Guid petId)
         {
-            var owners = FindOwnersByName(ownerName);
-            if (owners.Count == 0)
-                throw new Exception("Владельцы не найдены.");
-
-            if (owners.Count > 1)
-                throw new Exception("Найдено несколько владельцев. Уточните поиск.");
-
-            var selectedOwner = owners[0];
-            var pets = GetPetsByOwnerId(selectedOwner.Id);
-
-            if (pets.Count == 0)
-                throw new Exception("У владельца нет питомцев.");
-
-            if (pets.Count > 1)
-                throw new Exception("У владельца несколько питомцев. Используйте метод с указанием petId.");
-
-            var selectedPet = pets[0];
-            return CreateAppointmentForPet(selectedPet.Id, date, reason);
+            var petDto = _petManager.GetPetById(petId);
+            return petDto != null ? PetMapper.ToDomain(petDto) : null;
         }
 
-        /// <summary>
-        /// Создает запись на прием для конкретного питомца с автоматическим подбором ветеринара
-        /// </summary>
-        public Appointment CreateAppointmentForPet(int petId, DateTime date, string reason = "Плановый осмотр")
+        public Veterinarian GetVeterinarian(Guid vetId)
         {
-            if (date.DayOfWeek == DayOfWeek.Sunday)
-                throw new Exception("Воскресенье - выходной.");
-
-            var vet = GetVeterinarianByDay(date.DayOfWeek);
-            if (vet == null)
-                throw new Exception("Нет врачей в этот день.");
-
-            var slots = GetAvailableTimeSlots(vet.Id, date);
-            if (slots.Count == 0)
-                throw new Exception("Нет свободных временных слотов.");
-
-            var selectedTime = slots[0];
-            var pet = petManager.GetPet(petId);
-
-            return CreateAppointment(petId, vet.Id, selectedTime, selectedTime.ToString("HH:mm"), reason, pet.Breed);
+            var vetDto = _vetManager.GetVeterinarianById(vetId);
+            return vetDto != null ? VeterinarianMapper.ToDomain(vetDto) : null;
         }
 
-        /// <summary>
-        /// Получает историю посещений для питомца по имени владельца
-        /// </summary>
+        public List<Appointment> GetAppointmentsByDate(DateTime date)
+        {
+            return _appointmentManager.GetAppointmentsByDate(date)
+                .Select(AppointmentMapper.ToDomain)
+                .ToList();
+        }
+
+        // === Методы для работы с расписанием и историей ===
+
+        public ScheduleData GetScheduleData(DateTime date)
+        {
+            var appointments = GetAppointmentsByDate(date);
+            var veterinarians = GetAllVeterinarians();
+
+            return new ScheduleData
+            {
+                Appointments = appointments,
+                Veterinarians = veterinarians
+            };
+        }
+
         public List<VisitHistory> GetVisitHistoryByOwner(string ownerName)
         {
             var owners = FindOwnersByName(ownerName);
             if (owners.Count == 0)
-                throw new Exception("Владельцы не найдены.");
+                return new List<VisitHistory>();
 
-            if (owners.Count > 1)
-                throw new Exception("Найдено несколько владельцев. Уточните поиск.");
+            var owner = owners[0];
+            var pets = GetPetsByOwnerId(owner.Id);
 
-            var selectedOwner = owners[0];
-            var pets = GetPetsByOwnerId(selectedOwner.Id);
+            var allHistory = new List<VisitHistory>();
 
-            if (pets.Count == 0)
-                throw new Exception("У владельца нет питомцев.");
-
-            if (pets.Count > 1)
-                throw new Exception("У владельца несколько питомцев. Используйте метод с указанием petId.");
-
-            return GetVisitHistoryByPet(pets[0].Id);
-        }
-
-        /// <summary>
-        /// Получает историю посещений для указанного питомца
-        /// </summary>
-        public List<VisitHistory> GetVisitHistoryByPet(int petId) =>
-            visitHistoryManager.GetVisitHistoryByPet(petId);
-
-        /// <summary>
-        /// Получает все записи на прием на указанную дату
-        /// </summary>
-        public List<Appointment> GetAppointmentsByDate(DateTime date) =>
-            appointmentManager.GetAppointmentsByDate(date);
-
-        /// <summary>
-        /// Получает все записи на прием в клинике
-        /// </summary>
-        public List<Appointment> GetAllAppointments() =>
-            appointmentManager.GetAllAppointments();
-
-        /// <summary>
-        /// Получает все записи на прием для указанного питомца
-        /// </summary>
-        public List<Appointment> GetAppointmentsByPetId(int petId) =>
-            appointmentManager.GetAppointmentsByPetId(petId);
-
-        /// <summary>
-        /// Получает данные для отображения расписания на указанную дату
-        /// </summary>
-        public ScheduleData GetScheduleData(DateTime date)
-        {
-            return new ScheduleData
+            foreach (var pet in pets)
             {
-                Date = date,
-                Appointments = GetAppointmentsByDate(date),
-                Veterinarians = GetAllVeterinarians()
-            };
+                var petHistory = _visitHistoryManager.GetVisitHistoryByPet(pet.Id)
+                    .Select(VisitHistoryMapper.ToDomain)
+                    .ToList();
+                allHistory.AddRange(petHistory);
+            }
+
+            return allHistory.OrderByDescending(h => h.VisitDate).ToList();
         }
-
-        /// <summary>
-        /// Получает информацию о питомце по ID
-        /// </summary>
-        public Pet GetPet(int petId) => petManager.GetPet(petId);
-
-        /// <summary>
-        /// Получает информацию о ветеринаре по ID
-        /// </summary>
-        public Veterinarian GetVeterinarian(int vetId) => vetManager.GetVeterinarian(vetId);
     }
 
-    /// <summary>
-    /// Вспомогательный класс для данных расписания
-    /// </summary>
+    // Класс для данных расписания
     public class ScheduleData
     {
-        public DateTime Date { get; set; }
-        public List<Appointment> Appointments { get; set; }
-        public List<Veterinarian> Veterinarians { get; set; }
+        public List<Appointment> Appointments { get; set; } = new List<Appointment>();
+        public List<Veterinarian> Veterinarians { get; set; } = new List<Veterinarian>();
     }
 }

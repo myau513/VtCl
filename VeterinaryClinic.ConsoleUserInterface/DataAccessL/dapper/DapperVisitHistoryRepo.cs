@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using DataAccessLayer_VtCl;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -7,16 +6,24 @@ using System.Data.SqlClient;
 using System.Linq;
 using VeterinaryClinic.Core.Essence;
 
-namespace DataAccessL
+namespace DataAccessL.dapper
 {
     public class DapperVisitHistoryRepo : IRepository<VisitHistory>
     {
         private readonly string _connectionString;
 
-        public DapperVisitHistoryRepo(string connectionString)
+        public DapperVisitHistoryRepo(string connectionString = null)
         {
-            _connectionString = connectionString;
-            EnsureTableCreated();
+            _connectionString = connectionString ?? @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\настя\source\repos\VetClinic_Repo\VtCl\VeterinaryClinic.ConsoleUserInterface\VeterinaryClinic.ConsoleUserInterface\Database_VetCl.mdf;Integrated Security=True";
+
+            try
+            {
+                EnsureTableCreated();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Ошибка инициализации базы данных", ex);
+            }
         }
 
         private void EnsureTableCreated()
@@ -24,21 +31,14 @@ namespace DataAccessL
             using (var conn = CreateConnection())
             {
                 conn.Open();
-
                 var sql = @"
-                    IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='VisitHistories' and xtype='U')
-                    CREATE TABLE VisitHistories (
-                        Id_db UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-                        Id INT NOT NULL,
-                        PetId INT NOT NULL,
-                        VeterinarianName NVARCHAR(255) NOT NULL,
-                        VisitDate DATETIME NOT NULL,
-                        Reason NVARCHAR(MAX) NOT NULL,
-                        Diagnosis NVARCHAR(MAX),
-                        Treatment NVARCHAR(MAX),
-                        Notes NVARCHAR(MAX)
-                    )";
-
+            IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Owners')
+            CREATE TABLE Owners (
+                Id_db UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+                Id INT NOT NULL,
+                FullName NVARCHAR(255) NOT NULL,
+                PhoneNumber NVARCHAR(20) NOT NULL
+            )";
                 conn.Execute(sql);
             }
         }
@@ -70,7 +70,7 @@ namespace DataAccessL
 
         public void Add(VisitHistory item)
         {
-            if (item.Id_db == Guid.Empty) item.Id_db = Guid.NewGuid();
+            if (item.Id == Guid.Empty) item.Id = Guid.NewGuid();
 
             using (var conn = CreateConnection())
             {
@@ -102,6 +102,16 @@ namespace DataAccessL
                 var sql = "DELETE FROM VisitHistories WHERE Id_db = @Id";
                 conn.Execute(sql, new { Id = id });
             }
+        }
+
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
         }
     }
 }

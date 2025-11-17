@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using VeterinaryClinic.Core.Logic;
-using VeterinaryClinic.Core.Models;
+using VeterinaryClinic.Core.Essence;
 using VeterinaryClinic.WinFormsUserInterface;
 
 namespace VeterinaryClinic.WinFormsUserInterface

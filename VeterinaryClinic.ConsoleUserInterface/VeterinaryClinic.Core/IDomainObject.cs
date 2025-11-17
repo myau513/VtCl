@@ -8,6 +8,6 @@ namespace VeterinaryClinic.Core
 {
     public interface IDomainObject
     {
-        Guid Id_db { get; set; }
+        Guid Id { get; set; }
     }
 }

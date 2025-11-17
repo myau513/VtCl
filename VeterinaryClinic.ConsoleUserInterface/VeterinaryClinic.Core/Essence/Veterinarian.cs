@@ -9,10 +9,12 @@ namespace VeterinaryClinic.Core.Essence
 {
     public class Veterinarian : IDomainObject
     {
-        public Guid Id_db { get; set; } = Guid.NewGuid();
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public string FullName { get; set; }
         public string WorkDaysString { get; set; }
+
+        [NotMapped]
+        public DayOfWeek[] WorkDays => GetWorkDays();
 
         public DayOfWeek[] GetWorkDays()
         {
@@ -26,25 +28,9 @@ namespace VeterinaryClinic.Core.Essence
             WorkDaysString = workDays != null ? string.Join(",", workDays) : "";
         }
 
-        public Veterinarian(int id, string fullName, DayOfWeek[] workDays)
-        {
-            Id = id;
-            FullName = fullName;
-            SetWorkDays(workDays);
-        }
-        public Veterinarian()
-        {
-        }
-
-        /// <summary>
-        /// Возвращает строковое представление ветеринара - его полное имя
-        /// </summary>
-        /// <returns>Полное имя ветеринара</returns>
-
         public override string ToString()
         {
             return FullName;
         }
-
     }
 }

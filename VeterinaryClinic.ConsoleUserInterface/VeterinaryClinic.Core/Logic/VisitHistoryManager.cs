@@ -1,33 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VeterinaryClinic.Core.Essence;
+using VeterinaryClinic.Core.DTO;
 
 namespace VeterinaryClinic.Core.Logic
 {
     public class VisitHistoryManager
     {
-        private List<VisitHistory> visitHistory = new List<VisitHistory>();
-        private int nextHistoryId = 1;
+        private List<VisitHistoryDto> _visitHistory = new List<VisitHistoryDto>();
 
-        public void AddToVisitHistory(int petId, string veterinarianName, DateTime visitDate, string reason)
+        public VisitHistoryDto CreateVisitHistory(Guid petId, string veterinarianName, DateTime visitDate,
+                                                string reason, string diagnosis = "", string treatment = "", string notes = "")
         {
-            var historyRecord = new VisitHistory(
-                nextHistoryId++,
-                petId,
-                veterinarianName,
-                visitDate,
-                reason
-            );
-            visitHistory.Add(historyRecord);
+            var history = new VisitHistoryDto
+            {
+                Id = Guid.NewGuid(),
+                PetId = petId, // Добавлен PetId
+                VeterinarianName = veterinarianName,
+                VisitDate = visitDate,
+                Reason = reason,
+                Diagnosis = diagnosis,
+                Treatment = treatment,
+                Notes = notes
+            };
+
+            _visitHistory.Add(history);
+            return history;
         }
 
-        public List<VisitHistory> GetVisitHistoryByPet(int petId) =>
-            visitHistory
-                .Where(h => h.PetId == petId)
-                .OrderByDescending(h => h.VisitDate)
-                .ToList();
+        public List<VisitHistoryDto> GetAllVisitHistories() => _visitHistory;
+
+        public List<VisitHistoryDto> GetVisitHistoryByPet(Guid petId)
+        {
+            return _visitHistory.Where(v => v.PetId == petId)
+                              .OrderByDescending(v => v.VisitDate)
+                              .ToList();
+        }
     }
 }

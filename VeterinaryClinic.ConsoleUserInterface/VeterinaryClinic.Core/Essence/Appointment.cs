@@ -8,24 +8,15 @@ namespace VeterinaryClinic.Core.Essence
 {
     public class Appointment : IDomainObject
     {
-        public Guid Id_db { get; set; } = Guid.NewGuid();
-        public int Id { get; set; }
-        public int PetId { get; set; }
-        public int VeterinarianId { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid PetId { get; set; }
+        public Guid VeterinarianId { get; set; }
         public DateTime AppointmentDate { get; set; }
         public string TimeSlot { get; set; }
         public string Reason { get; set; }
         public string Breed { get; set; }
-
-        public Appointment(int id, int petId, int veterinarianId, DateTime appointmentDate, string timeSlot, string reason, string breed)
+        public Appointment()
         {
-            Id = id;
-            PetId = petId;
-            VeterinarianId = veterinarianId;
-            AppointmentDate = appointmentDate;
-            TimeSlot = timeSlot;
-            Reason = reason;
-            Breed = breed;
         }
     }
 }

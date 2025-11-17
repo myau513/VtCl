@@ -18,6 +18,8 @@ namespace VeterinaryClinic.WinFormsUserInterface
         private readonly OwnerManager ownerManager;
         private readonly PetManager petManager;
         private readonly VeterinarianManager vetManager;
+        private readonly AppointmentManager appointmentManager;
+        private readonly VisitHistoryManager visitHistoryManager;
 
         /// <summary>
         /// Создает главную форму приложения ветеринарной клиники
@@ -27,8 +29,10 @@ namespace VeterinaryClinic.WinFormsUserInterface
         {
             InitializeComponent();
             ownerManager = new OwnerManager();
-            petManager = new PetManager(ownerManager);
             vetManager = new VeterinarianManager();
+            appointmentManager = new AppointmentManager();
+            visitHistoryManager = new VisitHistoryManager();
+            petManager = new PetManager(ownerManager);
         }
 
         private ClinicService clinicService;
@@ -41,7 +45,13 @@ namespace VeterinaryClinic.WinFormsUserInterface
         {
             if (clinicService == null)
             {
-                clinicService = new ClinicService(ownerManager, petManager, vetManager);
+                clinicService = new ClinicService(
+                    ownerManager,
+                    petManager,
+                    vetManager,
+                    appointmentManager,
+                    visitHistoryManager
+                );
             }
         }
 
@@ -100,7 +110,7 @@ namespace VeterinaryClinic.WinFormsUserInterface
         /// <param name="e">Данные события</param>
         private void btnShowSchedule_Click(object sender, EventArgs e)
         {
-            var clinicService = new ClinicService(ownerManager, petManager, new VeterinarianManager());
+            InitializeClinicService();
             var scheduleForm = new VeterinarianScheduleForm(clinicService);
             scheduleForm.ShowDialog();
         }

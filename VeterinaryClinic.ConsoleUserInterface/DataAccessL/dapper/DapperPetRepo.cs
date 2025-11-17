@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using DataAccessLayer_VtCl;
+using DataAccessL;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -7,44 +7,63 @@ using System.Data.SqlClient;
 using System.Linq;
 using VeterinaryClinic.Core.Essence;
 
-namespace DataAccessL
+namespace DataAccessL.dapper
 {
     public class DapperPetRepo : IRepository<Pet>
     {
         private readonly string _connectionString;
 
-        public DapperPetRepo(string connectionString)
+        /// <summary>
+        /// Инициализирует репозиторий питомцев
+        /// </summary>
+        /// <param name="connectionString">Строка подключения к БД</param>
+        public DapperPetRepo(string connectionString = null)
         {
-            _connectionString = connectionString;
-            EnsureTableCreated();
+            _connectionString = connectionString ?? @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\настя\source\repos\VetClinic_Repo\VtCl\VeterinaryClinic.ConsoleUserInterface\VeterinaryClinic.ConsoleUserInterface\Database_VetCl.mdf;Integrated Security=True";
+
+            try
+            {
+                EnsureTableCreated();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Ошибка инициализации базы данных", ex);
+            }
         }
 
+        /// <summary>
+        /// Создает таблицу Owners если не существует
+        /// </summary>
         private void EnsureTableCreated()
         {
             using (var conn = CreateConnection())
             {
                 conn.Open();
-
                 var sql = @"
-                    IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Pets' and xtype='U')
-                    CREATE TABLE Pets (
-                        Id_db UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-                        Id INT NOT NULL,
-                        Name NVARCHAR(255) NOT NULL,
-                        Species NVARCHAR(100) NOT NULL,
-                        Breed NVARCHAR(100) NOT NULL,
-                        OwnerId INT NOT NULL
-                    )";
-
+            IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Owners')
+            CREATE TABLE Owners (
+                Id_db UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+                Id INT NOT NULL,
+                FullName NVARCHAR(255) NOT NULL,
+                PhoneNumber NVARCHAR(20) NOT NULL
+            )";
                 conn.Execute(sql);
             }
         }
 
+        /// <summary>
+        /// Создает подключение к базе данных
+        /// </summary>
+        /// <returns>Подключение к БД</returns>
         private IDbConnection CreateConnection()
         {
             return new SqlConnection(_connectionString);
         }
 
+        /// <summary>
+        /// Получает всех питомцев
+        /// </summary>
+        /// <returns>Коллекция питомцев</returns>
         public IEnumerable<Pet> GetAll()
         {
             using (var conn = CreateConnection())
@@ -55,6 +74,11 @@ namespace DataAccessL
             }
         }
 
+        /// <summary>
+        /// Получает питомца по идентификатору
+        /// </summary>
+        /// <param name="id">GUID идентификатор питомца</param>
+        /// <returns>Питомец или null</returns>
         public Pet GetById(Guid id)
         {
             using (var conn = CreateConnection())
@@ -65,9 +89,14 @@ namespace DataAccessL
             }
         }
 
+        /// <summary>
+        /// Добавляет нового питомца
+        /// </summary>
+        /// <param name="item">Объект питомца</param>
         public void Add(Pet item)
         {
-            if (item.Id_db == Guid.Empty) item.Id_db = Guid.NewGuid();
+            if (item.Id == Guid.Empty)
+                item.Id = Guid.NewGuid();
 
             using (var conn = CreateConnection())
             {
@@ -78,27 +107,52 @@ namespace DataAccessL
             }
         }
 
+        /// <summary>
+        /// Обновляет данные питомца
+        /// </summary>
+        /// <param name="item">Объект питомца с обновленными данными</param>
         public void Update(Pet item)
         {
             using (var conn = CreateConnection())
             {
                 conn.Open();
-                var sql = @"UPDATE Pets SET Id = @Id, Name = @Name, Species = @Species, 
-                            Breed = @Breed, OwnerId = @OwnerId
+                var sql = @"UPDATE Pets SET 
+                            Id = @Id, 
+                            Name = @Name, 
+                            Species = @Species, 
+                            Breed = @Breed, 
+                            OwnerId = @OwnerId
                             WHERE Id_db = @Id_db";
                 var affected = conn.Execute(sql, item);
-                if (affected == 0) throw new InvalidOperationException("Питомец не найден");
+                if (affected == 0)
+                    throw new InvalidOperationException("Питомец не найден");
             }
         }
 
+        /// <summary>
+        /// Удаляет питомца по идентификатору
+        /// </summary>
+        /// <param name="id">GUID идентификатор питомца</param>
         public void Delete(Guid id)
         {
             using (var conn = CreateConnection())
             {
                 conn.Open();
                 var sql = "DELETE FROM Pets WHERE Id_db = @Id";
-                conn.Execute(sql, new { Id = id });
+                var affected = conn.Execute(sql, new { Id = id });
+                if (affected == 0)
+                    throw new InvalidOperationException("Питомец не найден");
             }
+        }
+
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
         }
     }
 }

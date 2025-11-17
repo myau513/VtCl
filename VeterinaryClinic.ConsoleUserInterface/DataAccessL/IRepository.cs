@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DataAccessLayer_VtCl
+namespace DataAccessL
 {
-    public interface IRepository<T>
+    public interface IRepository<T> : IDisposable where T : class
     {
         /// <summary>
-        /// Возвращает cущностей
+        /// Возвращает все сущности
         /// </summary>
         IEnumerable<T> GetAll();
 
@@ -36,5 +33,7 @@ namespace DataAccessLayer_VtCl
         /// </summary>
         /// <param name="id">Уникальный идентификатор сущности</param>
         void Delete(Guid id);
+
+        void Save();
     }
 }

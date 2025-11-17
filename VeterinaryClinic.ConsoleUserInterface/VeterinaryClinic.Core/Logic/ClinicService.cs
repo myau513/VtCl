@@ -248,6 +248,20 @@ namespace VeterinaryClinic.Core.Logic
 
             return allHistory.OrderByDescending(h => h.VisitDate).ToList();
         }
+        public bool DeleteAppointment(Guid appointmentId)
+        {
+            try
+            {
+                _appointmentRepo.Delete(appointmentId);
+                _appointmentRepo.Save();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при удалении записи: {ex.Message}");
+                return false;
+            }
+        }
     }
 
     public class ScheduleData

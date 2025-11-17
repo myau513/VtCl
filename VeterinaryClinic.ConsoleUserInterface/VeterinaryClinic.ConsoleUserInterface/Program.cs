@@ -45,7 +45,8 @@ namespace VeterinaryClinic.ConsoleUserInterface
                 Console.WriteLine("3. Запись на прием");
                 Console.WriteLine("4. История визитов питомца");
                 Console.WriteLine("5. Просмотр расписания");
-                Console.WriteLine("6. Выход");
+                Console.WriteLine("6. Удаление записи"); 
+                Console.WriteLine("7. Выход");
                 Console.Write("Выберите действие: ");
 
                 string menuChoice = Console.ReadLine();
@@ -69,7 +70,10 @@ namespace VeterinaryClinic.ConsoleUserInterface
                         case "5":
                             ShowSchedule();
                             break;
-                        case "6":
+                        case "6": // ДОБАВИЛИ НОВЫЙ CASE
+                            DeleteAppointmentMenu();
+                            break;
+                        case "7":
                             exit = true;
                             break;
                         default:
@@ -584,6 +588,120 @@ namespace VeterinaryClinic.ConsoleUserInterface
             {
                 Console.WriteLine("❌ Удаление отменено.");
             }
+        }
+        static void DeleteAppointmentMenu()
+        {
+            Console.Clear();
+            Console.WriteLine("=== УДАЛЕНИЕ ЗАПИСИ НА ПРИЕМ ===");
+
+            Console.Write("Введите дату для просмотра записей (гггг-мм-дд): ");
+            if (!DateTime.TryParse(Console.ReadLine(), out DateTime date))
+            {
+                Console.WriteLine("❌ Неверный формат даты.");
+                Console.ReadKey();
+                return;
+            }
+
+            try
+            {
+                // Получаем расписание на выбранную дату
+                var scheduleData = _clinicService.GetScheduleData(date);
+                var appointments = scheduleData.Appointments;
+                var veterinarians = scheduleData.Veterinarians;
+
+                if (appointments.Count == 0)
+                {
+                    Console.WriteLine($"📭 На {date:dd.MM.yyyy} нет записей.");
+                    Console.ReadKey();
+                    return;
+                }
+
+                // Показываем все записи с номерами
+                Console.WriteLine($"\n📅 Записи на {date:dd.MM.yyyy}:\n");
+                var appointmentList = new List<Appointment>();
+
+                int counter = 1;
+                foreach (var vet in veterinarians)
+                {
+                    var vetAppointments = appointments.Where(a => a.VeterinarianId == vet.Id).OrderBy(a => a.AppointmentDate);
+                    foreach (var appointment in vetAppointments)
+                    {
+                        var pet = _clinicService.GetPet(appointment.PetId);
+                        var owner = _clinicService.FindOwnersByName("").FirstOrDefault(o => o.Id == pet?.OwnerId);
+
+                        Console.WriteLine($"{counter}. ⏰ {appointment.AppointmentDate:HH:mm} | 👨‍⚕️ {vet.FullName}");
+                        Console.WriteLine($"   🐾 Питомец: {pet?.Name ?? "Неизвестен"} ({pet?.Species ?? "Неизвестен"} - {pet?.Breed ?? "Неизвестен"})");
+                        Console.WriteLine($"   👤 Владелец: {owner?.FullName ?? "Неизвестен"}");
+                        Console.WriteLine($"   📝 Причина: {appointment.Reason}");
+                        Console.WriteLine($"   🔑 ID записи: {appointment.Id}");
+                        Console.WriteLine();
+
+                        appointmentList.Add(appointment);
+                        counter++;
+                    }
+                }
+
+                if (appointmentList.Count == 0)
+                {
+                    Console.WriteLine("📭 Записей не найдено.");
+                    Console.ReadKey();
+                    return;
+                }
+
+                Console.Write("Выберите номер записи для удаления (0 - отмена): ");
+                if (!int.TryParse(Console.ReadLine(), out int choice) || choice < 0 || choice > appointmentList.Count)
+                {
+                    Console.WriteLine("❌ Неверный выбор.");
+                    Console.ReadKey();
+                    return;
+                }
+
+                if (choice == 0)
+                {
+                    Console.WriteLine("❌ Удаление отменено.");
+                    Console.ReadKey();
+                    return;
+                }
+
+                var selectedAppointment = appointmentList[choice - 1];
+                var selectedPet = _clinicService.GetPet(selectedAppointment.PetId);
+                var selectedOwner = _clinicService.FindOwnersByName("").FirstOrDefault(o => o.Id == selectedPet?.OwnerId);
+                var selectedVet = veterinarians.FirstOrDefault(v => v.Id == selectedAppointment.VeterinarianId);
+
+                Console.WriteLine($"\n⚠️ ВЫ УДАЛЯЕТЕ ЗАПИСЬ:");
+                Console.WriteLine($"   📅 Дата: {selectedAppointment.AppointmentDate:dd.MM.yyyy HH:mm}");
+                Console.WriteLine($"   👨‍⚕️ Врач: {selectedVet?.FullName ?? "Неизвестен"}");
+                Console.WriteLine($"   🐾 Питомец: {selectedPet?.Name ?? "Неизвестен"}");
+                Console.WriteLine($"   👤 Владелец: {selectedOwner?.FullName ?? "Неизвестен"}");
+                Console.WriteLine($"   📝 Причина: {selectedAppointment.Reason}");
+
+                Console.Write("\n❓ Вы уверены? (да/нет): ");
+                string confirmation = Console.ReadLine()?.ToLower();
+
+                if (confirmation == "да" || confirmation == "д" || confirmation == "y" || confirmation == "yes")
+                {
+                    bool success = _clinicService.DeleteAppointment(selectedAppointment.Id);
+                    if (success)
+                    {
+                        Console.WriteLine("✅ Запись успешно удалена!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("❌ Ошибка при удалении записи.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("❌ Удаление отменено.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Ошибка: {ex.Message}");
+            }
+
+            Console.WriteLine("Нажмите любую клавишу для возврата...");
+            Console.ReadKey();
         }
 
         static void CreateAppointment()

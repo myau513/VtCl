@@ -1,5 +1,5 @@
-﻿using VeterinaryClinic.Core.DTO;
-using VeterinaryClinic.Core.Essence;
+﻿using VeterinaryClinic.Core.Essence;
+using Dto.Essence;
 
 namespace VeterinaryClinic.Core.Mapper
 {
@@ -16,11 +16,9 @@ namespace VeterinaryClinic.Core.Mapper
                 PhoneNumber = entity.PhoneNumber
             };
         }
-        public static Owner ToDomain(OwnerDto dto) => new Owner
-        {
-            Id = dto.Id,
-            FullName = dto.FullName,
-            PhoneNumber = dto.PhoneNumber
-        };
+        public static Owner ToDomain(OwnerDto dto) =>
+        new Owner(dto.Id, dto.FullName, dto.PhoneNumber);
+
+
     }
 }

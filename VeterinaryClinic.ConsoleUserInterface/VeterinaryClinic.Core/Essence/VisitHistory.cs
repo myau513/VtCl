@@ -16,5 +16,16 @@ namespace VeterinaryClinic.Core.Essence
         public string Diagnosis { get; set; }
         public string Treatment { get; set; }
         public string Notes { get; set; }
+        public VisitHistory(Guid id, Guid petId, string vetName, DateTime visitDate, string reason, string diagnosis, string treatment, string notes)
+        {
+            Id = id;
+            PetId = petId;
+            VeterinarianName = vetName;
+            VisitDate = visitDate;
+            Reason = reason;
+            Diagnosis = diagnosis;
+            Treatment = treatment;
+            Notes = notes;
+        }
     }
 }

@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VeterinaryClinic.WinFormsг
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessL", "DataAccessL\DataAccessL.csproj", "{1B115203-985F-45E7-97AC-84345A63B8A7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dto", "Dto\Dto.csproj", "{92936F84-8CEF-42C9-87A9-12DAF1828AD1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{1B115203-985F-45E7-97AC-84345A63B8A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B115203-985F-45E7-97AC-84345A63B8A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B115203-985F-45E7-97AC-84345A63B8A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92936F84-8CEF-42C9-87A9-12DAF1828AD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92936F84-8CEF-42C9-87A9-12DAF1828AD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92936F84-8CEF-42C9-87A9-12DAF1828AD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92936F84-8CEF-42C9-87A9-12DAF1828AD1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

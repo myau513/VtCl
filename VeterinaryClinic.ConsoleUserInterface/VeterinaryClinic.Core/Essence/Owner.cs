@@ -11,7 +11,12 @@ namespace VeterinaryClinic.Core.Essence
         public Guid Id { get; set; } = Guid.NewGuid();
         public string FullName { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
-
+        public Owner(Guid id, string fullName, string phoneNumber)
+        {
+            Id = id;
+            FullName = fullName;
+            PhoneNumber = phoneNumber;
+        }
         public override string ToString()
         {
             return $"{FullName} ({PhoneNumber})";

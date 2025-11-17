@@ -2,8 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using VeterinaryClinic.Core;
-using VeterinaryClinic.Core.Essence;
+using Dto.Essence;
 
 namespace DataAccessL
 {

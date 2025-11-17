@@ -18,5 +18,15 @@ namespace VeterinaryClinic.Core.Essence
         public Appointment()
         {
         }
+        public Appointment(Guid id, Guid petId, Guid vetId, DateTime appointmentDate, string timeSlot, string reason, string breed)
+        {
+            Id = id;
+            PetId = petId;
+            VeterinarianId = vetId;
+            AppointmentDate = appointmentDate;
+            TimeSlot = timeSlot;
+            Reason = reason;
+            Breed = breed;
+        }
     }
 }

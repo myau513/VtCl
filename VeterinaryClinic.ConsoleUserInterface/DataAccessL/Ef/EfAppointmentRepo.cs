@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VeterinaryClinic.Core.Essence;
+using Dto.Essence;
 using Microsoft.EntityFrameworkCore;
-using VeterinaryClinic.Core.DTO;
 
 namespace DataAccessL.Ef
 {

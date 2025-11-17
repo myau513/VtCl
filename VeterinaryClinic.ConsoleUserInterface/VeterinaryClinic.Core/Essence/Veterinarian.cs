@@ -12,6 +12,12 @@ namespace VeterinaryClinic.Core.Essence
         public Guid Id { get; set; } = Guid.NewGuid();
         public string FullName { get; set; }
         public string WorkDaysString { get; set; }
+        public Veterinarian(Guid id, string fullName, string workDaysString)
+        {
+            Id = id;
+            FullName = fullName;
+            WorkDaysString = workDaysString;
+        }
 
         [NotMapped]
         public DayOfWeek[] WorkDays => GetWorkDays();

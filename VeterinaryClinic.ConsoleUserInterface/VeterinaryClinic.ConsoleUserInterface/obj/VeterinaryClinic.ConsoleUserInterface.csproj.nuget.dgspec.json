@@ -13,10 +13,26 @@
         "frameworks": {
           "net472": {
             "projectReferences": {
-              "C:\\Users\\настя\\source\\repos\\VetClinic_Repo\\VtCl\\VeterinaryClinic.ConsoleUserInterface\\VeterinaryClinic.Core\\VeterinaryClinic.Core.csproj": {
-                "projectPath": "C:\\Users\\настя\\source\\repos\\VetClinic_Repo\\VtCl\\VeterinaryClinic.ConsoleUserInterface\\VeterinaryClinic.Core\\VeterinaryClinic.Core.csproj"
+              "C:\\Users\\настя\\source\\repos\\VetClinic_Repo\\VtCl\\VeterinaryClinic.ConsoleUserInterface\\Dto\\Dto.csproj": {
+                "projectPath": "C:\\Users\\настя\\source\\repos\\VetClinic_Repo\\VtCl\\VeterinaryClinic.ConsoleUserInterface\\Dto\\Dto.csproj"
               }
             }
+          }
+        }
+      },
+      "frameworks": {
+        "net472": {}
+      }
+    },
+    "C:\\Users\\настя\\source\\repos\\VetClinic_Repo\\VtCl\\VeterinaryClinic.ConsoleUserInterface\\Dto\\Dto.csproj": {
+      "restore": {
+        "projectUniqueName": "C:\\Users\\настя\\source\\repos\\VetClinic_Repo\\VtCl\\VeterinaryClinic.ConsoleUserInterface\\Dto\\Dto.csproj",
+        "projectName": "Dto",
+        "projectPath": "C:\\Users\\настя\\source\\repos\\VetClinic_Repo\\VtCl\\VeterinaryClinic.ConsoleUserInterface\\Dto\\Dto.csproj",
+        "UsingMicrosoftNETSdk": false,
+        "frameworks": {
+          "net472": {
+            "projectReferences": {}
           }
         }
       },
@@ -122,7 +138,11 @@
         "UsingMicrosoftNETSdk": false,
         "frameworks": {
           "net472": {
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\Users\\настя\\source\\repos\\VetClinic_Repo\\VtCl\\VeterinaryClinic.ConsoleUserInterface\\Dto\\Dto.csproj": {
+                "projectPath": "C:\\Users\\настя\\source\\repos\\VetClinic_Repo\\VtCl\\VeterinaryClinic.ConsoleUserInterface\\Dto\\Dto.csproj"
+              }
+            }
           }
         }
       },

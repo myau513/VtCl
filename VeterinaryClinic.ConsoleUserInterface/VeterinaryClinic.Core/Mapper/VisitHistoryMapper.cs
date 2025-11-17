@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VeterinaryClinic.Core.DTO;
-using VeterinaryClinic.Core.Essence;
+﻿using VeterinaryClinic.Core.Essence;
+using Dto.Essence;
 
 namespace VeterinaryClinic.Core.Mapper
 {
@@ -26,16 +21,8 @@ namespace VeterinaryClinic.Core.Mapper
             };
         }
 
-        public static VisitHistory ToDomain(VisitHistoryDto dto) => new VisitHistory
-        {
-            Id = dto.Id,
-            PetId = dto.PetId,
-            VeterinarianName = dto.VeterinarianName,
-            VisitDate = dto.VisitDate,
-            Reason = dto.Reason,
-            Diagnosis = dto.Diagnosis,
-            Treatment = dto.Treatment,
-            Notes = dto.Notes
-        };
+        public static VisitHistory ToDomain(VisitHistoryDto dto) =>
+        new VisitHistory(dto.Id, dto.PetId, dto.VeterinarianName, dto.VisitDate, dto.Reason, dto.Diagnosis, dto.Treatment, dto.Notes);
+
     }
 }

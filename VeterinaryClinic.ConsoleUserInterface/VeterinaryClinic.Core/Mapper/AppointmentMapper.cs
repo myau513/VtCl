@@ -1,5 +1,5 @@
-﻿using VeterinaryClinic.Core.DTO;
-using VeterinaryClinic.Core.Essence;
+﻿using VeterinaryClinic.Core.Essence;
+using Dto.Essence;
 
 namespace VeterinaryClinic.Core.Mapper
 {

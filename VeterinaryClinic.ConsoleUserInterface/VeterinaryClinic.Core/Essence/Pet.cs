@@ -13,7 +13,14 @@ namespace VeterinaryClinic.Core.Essence
         public string Species { get; set; } = string.Empty;
         public string Breed { get; set; } = string.Empty;
         public Guid OwnerId { get; set; }
-
+        public Pet(Guid id, string name, string species, string breed, Guid ownerId)
+        {
+            Id = id;
+            Name = name;
+            Species = species;
+            Breed = breed;
+            OwnerId = ownerId;
+        }
         public override string ToString()
         {
             return $"{Name} ({Species} - {Breed})";

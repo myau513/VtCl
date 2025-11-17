@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using VeterinaryClinic.Core.DTO;
 using VeterinaryClinic.Core.Essence;
 using VeterinaryClinic.Core.Logic;
 
@@ -652,7 +651,11 @@ namespace VeterinaryClinic.ConsoleUserInterface
                     selectedTime,
                     selectedTime.ToString("HH:mm"),
                     reason,
-                    selectedPet.Breed);
+                    selectedPet.Breed,
+                    diagnosis: "",
+                    treatment: "",
+                    notes: "");
+
 
                 Console.WriteLine("✅ Запись успешно создана:");
                 Console.WriteLine($"👤 Владелец: {selectedOwner.FullName}");

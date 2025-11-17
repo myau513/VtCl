@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using VeterinaryClinic.Core.DTO;
+using Dto.Essence;
 using VeterinaryClinic.Core.Essence;
 
 namespace VeterinaryClinic.Core.Logic

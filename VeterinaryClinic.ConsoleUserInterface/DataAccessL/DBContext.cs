@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
-using VeterinaryClinic.Core.Essence;
 using System.Configuration;
-using VeterinaryClinic.Core.DTO;
+using System.Collections.Generic;
+using System.Linq;
+using Dto.Essence;
 
 namespace DataAccessL
 {
@@ -27,7 +28,7 @@ namespace DataAccessL
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Owner>(entity =>
+            modelBuilder.Entity<OwnerDto>(entity =>
             {
                 entity.HasKey(owner => owner.Id);
                 entity.Property(owner => owner.FullName)
@@ -37,7 +38,7 @@ namespace DataAccessL
                     .HasMaxLength(20);
             });
 
-            modelBuilder.Entity<Pet>(entity =>
+            modelBuilder.Entity<PetDto>(entity =>
             {
                 entity.HasKey(pet => pet.Id);
                 entity.Property(pet => pet.Name)
@@ -50,7 +51,7 @@ namespace DataAccessL
                     .HasMaxLength(100);
             });
 
-            modelBuilder.Entity<Veterinarian>(entity =>
+            modelBuilder.Entity<VeterinarianDto>(entity =>
             {
                 entity.HasKey(veterinarian => veterinarian.Id);
                 entity.Property(veterinarian => veterinarian.FullName)
@@ -60,7 +61,7 @@ namespace DataAccessL
                     .HasMaxLength(100);
             });
 
-            modelBuilder.Entity<Appointment>(entity =>
+            modelBuilder.Entity<AppointmentDto>(entity =>
             {
                 entity.HasKey(appointment => appointment.Id);
                 entity.Property(appointment => appointment.AppointmentDate)
@@ -73,7 +74,7 @@ namespace DataAccessL
                     .HasMaxLength(100);
             });
 
-            modelBuilder.Entity<VisitHistory>(entity =>
+            modelBuilder.Entity<VisitHistoryDto>(entity =>
             {
                 entity.HasKey(visitHistory => visitHistory.Id);
                 entity.Property(visitHistory => visitHistory.VeterinarianName)

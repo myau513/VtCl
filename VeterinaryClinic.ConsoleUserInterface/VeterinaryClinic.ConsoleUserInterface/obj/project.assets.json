@@ -2253,7 +2253,7 @@
       "DataAccessL/1.0.0": {
         "type": "project",
         "dependencies": {
-          "VeterinaryClinic.Core": "1.0.0"
+          "Dto": "1.0.0"
         },
         "compile": {
           "bin/placeholder/DataAccessL.dll": {}
@@ -2262,8 +2262,20 @@
           "bin/placeholder/DataAccessL.dll": {}
         }
       },
+      "Dto/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/Dto.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Dto.dll": {}
+        }
+      },
       "VeterinaryClinic.Core/1.0.0": {
         "type": "project",
+        "dependencies": {
+          "Dto": "1.0.0"
+        },
         "compile": {
           "bin/placeholder/VeterinaryClinic.Core.dll": {}
         },
@@ -7344,6 +7356,11 @@
       "type": "project",
       "path": "../DataAccessL/DataAccessL.csproj",
       "msbuildProject": "../DataAccessL/DataAccessL.csproj"
+    },
+    "Dto/1.0.0": {
+      "type": "project",
+      "path": "../Dto/Dto.csproj",
+      "msbuildProject": "../Dto/Dto.csproj"
     },
     "VeterinaryClinic.Core/1.0.0": {
       "type": "project",

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VeterinaryClinic.Core.DTO;
-using VeterinaryClinic.Core.Essence;
+﻿using VeterinaryClinic.Core.Essence;
+using Dto.Essence;
 
 namespace VeterinaryClinic.Core.Mapper
 {
@@ -22,14 +17,8 @@ namespace VeterinaryClinic.Core.Mapper
                 OwnerId = entity.OwnerId
             };
         }
-        public static Pet ToDomain(PetDto dto) => new Pet
-        {
-            Id = dto.Id,
-            Name = dto.Name,
-            Species = dto.Species,
-            Breed = dto.Breed,
-            OwnerId = dto.OwnerId
+        public static Pet ToDomain(PetDto dto) =>
+        new Pet(dto.Id, dto.Name, dto.Species, dto.Breed, dto.OwnerId);
 
-        };
     }
 }

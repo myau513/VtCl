@@ -125,7 +125,6 @@ namespace VeterinaryClinic.ConsoleUserInterface
             }
         }
 
-        // Новый метод для создания базы данных
         static void CreateDatabaseWithEF(string connectionString)
         {
             try
@@ -138,43 +137,16 @@ namespace VeterinaryClinic.ConsoleUserInterface
                 {
                     Console.WriteLine("🔄 Создание/проверка базы данных...");
 
-                    // Убедимся, что база существует и таблицы созданы
-                    if (!context.Database.CanConnect())
-                    {
-                        Console.WriteLine("📦 База не существует, создаем...");
-                        context.Database.EnsureCreated();
-                        InitializeVeterinarians(context); // ДОБАВЬТЕ ЭТУ СТРОКУ
-                        Console.WriteLine("✅ База данных и таблицы созданы успешно!");
-                    }
-                    else
-                    {
-                        // Если база существует, применяем миграции или создаем таблицы
-                        context.Database.EnsureCreated();
+                    // Просто создаем базу
+                    context.Database.EnsureCreated();
 
-                        // ДОБАВЬТЕ ЭТИ СТРОКИ:
-                        if (!context.Veterinarians.Any())
-                        {
-                            InitializeVeterinarians(context);
-                        }
-
-                        Console.WriteLine("✅ База данных подключена, таблицы проверены.");
+                    // Добавляем ветеринаров если их нет
+                    if (!context.Veterinarians.Any())
+                    {
+                        InitializeVeterinarians(context);
                     }
 
-                    // Альтернативный способ проверки существования таблицы Owners
-                    try
-                    {
-                        // Пробуем выполнить простой запрос к таблице Owners
-                        var testQuery = context.Owners.Take(1).Count();
-                        Console.WriteLine("✅ Таблица Owners существует и доступна.");
-                    }
-                    catch
-                    {
-                        Console.WriteLine("⚠️ Таблица Owners не найдена, пересоздаем базу...");
-                        context.Database.EnsureDeleted();
-                        context.Database.EnsureCreated();
-                        InitializeVeterinarians(context); // ДОБАВЬТЕ ЭТУ СТРОКУ
-                        Console.WriteLine("✅ База пересоздана успешно!");
-                    }
+                    Console.WriteLine("✅ База данных готова к работе!");
                 }
             }
             catch (Exception ex)
@@ -184,6 +156,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
             }
         }
 
+        // Метод для инициализации ветеринаров
         static void InitializeVeterinarians(Context context)
         {
             if (context.Veterinarians.Any())
@@ -194,10 +167,10 @@ namespace VeterinaryClinic.ConsoleUserInterface
 
             var veterinarians = new[]
             {
-                new { Name = "Иванов И.И.", Days = new[] { DayOfWeek.Monday, DayOfWeek.Thursday } },
-                new { Name = "Петров П.П.", Days = new[] { DayOfWeek.Tuesday, DayOfWeek.Friday } },
-                new { Name = "Сидоров С.С.", Days = new[] { DayOfWeek.Wednesday, DayOfWeek.Saturday } }
-             };
+        new { Name = "Иванов И.И.", Days = new[] { DayOfWeek.Monday, DayOfWeek.Thursday } },
+        new { Name = "Петров П.П.", Days = new[] { DayOfWeek.Tuesday, DayOfWeek.Friday } },
+        new { Name = "Сидоров С.С.", Days = new[] { DayOfWeek.Wednesday, DayOfWeek.Saturday } }
+    };
 
             foreach (var vet in veterinarians)
             {

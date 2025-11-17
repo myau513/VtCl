@@ -29,7 +29,7 @@ namespace DataAccessL.dapper
         {
             using (var db = new SqlConnection(_connectionString))
             {
-                var sqlQuery = "INSERT INTO VisitHistory (Id, PetId, VeterinarianName, VisitDate, Reason, Diagnosis, Treatment, Notes) " +
+                var sqlQuery = "INSERT INTO VisitHistories (Id, PetId, VeterinarianName, VisitDate, Reason, Diagnosis, Treatment, Notes) " +
                                "VALUES(@Id, @PetId, @VeterinarianName, @VisitDate, @Reason, @Diagnosis, @Treatment, @Notes)";
                 db.Execute(sqlQuery, visithistorydto);
             }
@@ -44,7 +44,7 @@ namespace DataAccessL.dapper
         {
             using (var db = new SqlConnection(_connectionString))
             {
-                var sqlQuery = "DELETE FROM VisitHistory WHERE Id = @id";
+                var sqlQuery = "DELETE FROM VisitHistories WHERE Id = @id";
                 db.Execute(sqlQuery, new { id });
             }
         }
@@ -58,7 +58,7 @@ namespace DataAccessL.dapper
         {
             using (var db = new SqlConnection(_connectionString))
             {
-                return db.Query<VisitHistoryDto>("SELECT Id, PetId, VeterinarianName, VisitDate, Reason, Diagnosis, Treatment, Notes FROM VisitHistory").ToList();
+                return db.Query<VisitHistoryDto>("SELECT Id, PetId, VeterinarianName, VisitDate, Reason, Diagnosis, Treatment, Notes FROM VisitHistories").ToList();
             }
         }
 
@@ -66,7 +66,7 @@ namespace DataAccessL.dapper
         {
             using (var db = new SqlConnection(_connectionString))
             {
-                return db.Query<VisitHistoryDto>("SELECT Id, PetId, VeterinarianName, VisitDate, Reason, Diagnosis, Treatment, Notes FROM VisitHistory WHERE Id = @id",
+                return db.Query<VisitHistoryDto>("SELECT Id, PetId, VeterinarianName, VisitDate, Reason, Diagnosis, Treatment, Notes FROM VisitHistories WHERE Id = @id",
                     new { id }).FirstOrDefault();
             }
         }
@@ -80,7 +80,7 @@ namespace DataAccessL.dapper
         {
             using (var db = new SqlConnection(_connectionString))
             {
-                var sqlQuery = "UPDATE VisitHistory SET PetId = @PetId, VeterinarianName = @VeterinarianName, " +
+                var sqlQuery = "UPDATE VisitHistories SET PetId = @PetId, VeterinarianName = @VeterinarianName, " +
                                "VisitDate = @VisitDate, Reason = @Reason, Diagnosis = @Diagnosis, " +
                                "Treatment = @Treatment, Notes = @Notes WHERE Id = @Id";
                 db.Execute(sqlQuery, item);

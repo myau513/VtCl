@@ -121,6 +121,8 @@ namespace DataAccessL
             // Конфигурация для VisitHistoryDto
             modelBuilder.Entity<VisitHistoryDto>(entity =>
             {
+                entity.ToTable("VisitHistories"); // ДОБАВЬТЕ ЭТУ СТРОКУ
+
                 entity.HasKey(visitHistory => visitHistory.Id);
                 entity.Property(visitHistory => visitHistory.Id)
                     .HasColumnType("uniqueidentifier")

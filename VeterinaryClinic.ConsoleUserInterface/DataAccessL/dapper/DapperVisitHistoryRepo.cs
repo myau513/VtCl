@@ -13,6 +13,13 @@ namespace DataAccessL.dapper
     {
         private readonly string _connectionString;
 
+        static DapperVisitHistoryRepo()
+        {
+            SqlMapper.RemoveTypeMap(typeof(Guid));
+            SqlMapper.RemoveTypeMap(typeof(Guid?));
+            SqlMapper.AddTypeHandler(new GuidTypeHandler());
+        }
+
         public DapperVisitHistoryRepo(string connectionString)
         {
             _connectionString = connectionString;
@@ -51,7 +58,7 @@ namespace DataAccessL.dapper
         {
             using (var db = new SqlConnection(_connectionString))
             {
-                return db.Query<VisitHistoryDto>("SELECT * FROM VisitHistory").ToList();
+                return db.Query<VisitHistoryDto>("SELECT Id, PetId, VeterinarianName, VisitDate, Reason, Diagnosis, Treatment, Notes FROM VisitHistory").ToList();
             }
         }
 
@@ -59,7 +66,8 @@ namespace DataAccessL.dapper
         {
             using (var db = new SqlConnection(_connectionString))
             {
-                return db.Query<VisitHistoryDto>("SELECT * FROM VisitHistory WHERE Id = @id", new { id }).FirstOrDefault();
+                return db.Query<VisitHistoryDto>("SELECT Id, PetId, VeterinarianName, VisitDate, Reason, Diagnosis, Treatment, Notes FROM VisitHistory WHERE Id = @id",
+                    new { id }).FirstOrDefault();
             }
         }
 

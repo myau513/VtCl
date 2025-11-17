@@ -28,9 +28,16 @@ namespace DataAccessL
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Конвертация Guid для всех сущностей
             modelBuilder.Entity<OwnerDto>(entity =>
             {
                 entity.HasKey(owner => owner.Id);
+                entity.Property(owner => owner.Id)
+                    .HasConversion(
+                        v => v.ToByteArray(),  // Конвертируем Guid в byte[]
+                        v => new Guid(v))      // Конвертируем byte[] в Guid
+                    .ValueGeneratedOnAdd();
                 entity.Property(owner => owner.FullName)
                     .IsRequired()
                     .HasMaxLength(200);
@@ -41,6 +48,15 @@ namespace DataAccessL
             modelBuilder.Entity<PetDto>(entity =>
             {
                 entity.HasKey(pet => pet.Id);
+                entity.Property(pet => pet.Id)
+                    .HasConversion(
+                        v => v.ToByteArray(),
+                        v => new Guid(v))
+                    .ValueGeneratedOnAdd();
+                entity.Property(pet => pet.OwnerId)
+                    .HasConversion(
+                        v => v.ToByteArray(),
+                        v => new Guid(v));
                 entity.Property(pet => pet.Name)
                     .IsRequired()
                     .HasMaxLength(100);
@@ -54,6 +70,11 @@ namespace DataAccessL
             modelBuilder.Entity<VeterinarianDto>(entity =>
             {
                 entity.HasKey(veterinarian => veterinarian.Id);
+                entity.Property(veterinarian => veterinarian.Id)
+                    .HasConversion(
+                        v => v.ToByteArray(),
+                        v => new Guid(v))
+                    .ValueGeneratedOnAdd();
                 entity.Property(veterinarian => veterinarian.FullName)
                     .IsRequired()
                     .HasMaxLength(200);
@@ -64,6 +85,19 @@ namespace DataAccessL
             modelBuilder.Entity<AppointmentDto>(entity =>
             {
                 entity.HasKey(appointment => appointment.Id);
+                entity.Property(appointment => appointment.Id)
+                    .HasConversion(
+                        v => v.ToByteArray(),
+                        v => new Guid(v))
+                    .ValueGeneratedOnAdd();
+                entity.Property(appointment => appointment.PetId)
+                    .HasConversion(
+                        v => v.ToByteArray(),
+                        v => new Guid(v));
+                entity.Property(appointment => appointment.VeterinarianId)
+                    .HasConversion(
+                        v => v.ToByteArray(),
+                        v => new Guid(v));
                 entity.Property(appointment => appointment.AppointmentDate)
                     .IsRequired();
                 entity.Property(appointment => appointment.TimeSlot)
@@ -77,6 +111,15 @@ namespace DataAccessL
             modelBuilder.Entity<VisitHistoryDto>(entity =>
             {
                 entity.HasKey(visitHistory => visitHistory.Id);
+                entity.Property(visitHistory => visitHistory.Id)
+                    .HasConversion(
+                        v => v.ToByteArray(),
+                        v => new Guid(v))
+                    .ValueGeneratedOnAdd();
+                entity.Property(visitHistory => visitHistory.PetId)
+                    .HasConversion(
+                        v => v.ToByteArray(),
+                        v => new Guid(v));
                 entity.Property(visitHistory => visitHistory.VeterinarianName)
                     .IsRequired()
                     .HasMaxLength(200);

@@ -13,6 +13,13 @@ namespace DataAccessL.dapper
     {
         private readonly string _connectionString;
 
+        static DapperPetRepo()
+        {
+            SqlMapper.RemoveTypeMap(typeof(Guid));
+            SqlMapper.RemoveTypeMap(typeof(Guid?));
+            SqlMapper.AddTypeHandler(new GuidTypeHandler());
+        }
+
         public DapperPetRepo(string connectionString)
         {
             _connectionString = connectionString;
@@ -50,7 +57,7 @@ namespace DataAccessL.dapper
         {
             using (var db = new SqlConnection(_connectionString))
             {
-                return db.Query<PetDto>("SELECT * FROM Pets").ToList();
+                return db.Query<PetDto>("SELECT Id, Name, Species, Breed, OwnerId FROM Pets").ToList();
             }
         }
 
@@ -58,7 +65,8 @@ namespace DataAccessL.dapper
         {
             using (var db = new SqlConnection(_connectionString))
             {
-                return db.Query<PetDto>("SELECT * FROM Pets WHERE Id = @id", new { id }).FirstOrDefault();
+                return db.Query<PetDto>("SELECT Id, Name, Species, Breed, OwnerId FROM Pets WHERE Id = @id",
+                    new { id }).FirstOrDefault();
             }
         }
 

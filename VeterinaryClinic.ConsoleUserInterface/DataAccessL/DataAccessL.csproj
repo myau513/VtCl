@@ -222,6 +222,7 @@
     <Compile Include="dapper\DapperPetRepo.cs" />
     <Compile Include="dapper\DapperVeterinarianRepo.cs" />
     <Compile Include="dapper\DapperVisitHistoryRepo.cs" />
+    <Compile Include="dapper\GuidTypeHandler.cs" />
     <Compile Include="DBContext.cs" />
     <Compile Include="EfBaseRepository.cs" />
     <Compile Include="Ef\EfAppointmentRepo.cs" />

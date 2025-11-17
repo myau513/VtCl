@@ -11,7 +11,16 @@ namespace DataAccessL.dapper
 {
     public class DapperOwnerRepo : IRepository<OwnerDto>
     {
+   
+    
         private readonly string _connectionString;
+
+        static DapperOwnerRepo()
+        {
+            SqlMapper.RemoveTypeMap(typeof(Guid));
+            SqlMapper.RemoveTypeMap(typeof(Guid?));
+            SqlMapper.AddTypeHandler(new GuidTypeHandler());
+        }
 
         public DapperOwnerRepo(string connectionString)
         {
@@ -50,7 +59,8 @@ namespace DataAccessL.dapper
         {
             using (var db = new SqlConnection(_connectionString))
             {
-                return db.Query<OwnerDto>("SELECT * FROM Owners").ToList();
+                // УБРАЛ CAST - теперь используем обычные запросы
+                return db.Query<OwnerDto>("SELECT Id, FullName, PhoneNumber FROM Owners").ToList();
             }
         }
 
@@ -58,7 +68,9 @@ namespace DataAccessL.dapper
         {
             using (var db = new SqlConnection(_connectionString))
             {
-                return db.Query<OwnerDto>("SELECT * FROM Owners WHERE Id = @id", new { id }).FirstOrDefault();
+                // УБРАЛ CAST - GuidTypeHandler сам разберется с конвертацией
+                return db.Query<OwnerDto>("SELECT Id, FullName, PhoneNumber FROM Owners WHERE Id = @id", 
+                    new { id }).FirstOrDefault();
             }
         }
 
@@ -75,5 +87,7 @@ namespace DataAccessL.dapper
                 db.Execute(sqlQuery, item);
             }
         }
+    
+
     }
 }

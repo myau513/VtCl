@@ -13,6 +13,13 @@ namespace DataAccessL.dapper
     {
         private readonly string _connectionString;
 
+        static DapperAppointmentRepo()
+        {
+            SqlMapper.RemoveTypeMap(typeof(Guid));
+            SqlMapper.RemoveTypeMap(typeof(Guid?));
+            SqlMapper.AddTypeHandler(new GuidTypeHandler());
+        }
+
         public DapperAppointmentRepo(string connectionString)
         {
             _connectionString = connectionString;
@@ -51,7 +58,7 @@ namespace DataAccessL.dapper
         {
             using (var db = new SqlConnection(_connectionString))
             {
-                return db.Query<AppointmentDto>("SELECT * FROM Appointments").ToList();
+                return db.Query<AppointmentDto>("SELECT Id, PetId, VeterinarianId, AppointmentDate, TimeSlot, Reason, Breed FROM Appointments").ToList();
             }
         }
 
@@ -59,7 +66,8 @@ namespace DataAccessL.dapper
         {
             using (var db = new SqlConnection(_connectionString))
             {
-                return db.Query<AppointmentDto>("SELECT * FROM Appointments WHERE Id = @id", new { id }).FirstOrDefault();
+                return db.Query<AppointmentDto>("SELECT Id, PetId, VeterinarianId, AppointmentDate, TimeSlot, Reason, Breed FROM Appointments WHERE Id = @id",
+                    new { id }).FirstOrDefault();
             }
         }
 

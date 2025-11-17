@@ -10,24 +10,23 @@ namespace VeterinaryClinic.WinFormsUserInterface
 {
     public partial class AppointmentForm : Form
     {
-        private readonly ClinicService clinicService;
-        private readonly Pet selectedPet;
+        private readonly ClinicService _clinicService;
+        private readonly Pet _selectedPet;
+        private List<Veterinarian> _veterinarians;
 
-        private readonly string[] timeIntervals = { "10", "11", "12", "13", "14", "15", "16", "17", "18" };
-        private readonly string[] daysOfWeek = { "pn", "vt", "sr", "cht", "pt", "sb" };
-
-        private List<Veterinarian> veterinarians;
+        private readonly string[] _timeIntervals = { "10", "11", "12", "13", "14", "15", "16", "17", "18" };
+        private readonly string[] _daysOfWeek = { "pn", "vt", "sr", "cht", "pt", "sb" };
 
         public string Reason { get; private set; }
         public DateTime SelectedDate { get; private set; }
         public string SelectedTime { get; private set; }
-        public int SelectedVeterinarianId { get; private set; }
+        public Guid SelectedVeterinarianId { get; private set; } // Изменил на Guid
 
         public AppointmentForm(ClinicService clinicService, Pet pet)
         {
             InitializeComponent();
-            this.clinicService = clinicService;
-            selectedPet = pet;
+            _clinicService = clinicService;
+            _selectedPet = pet;
             InitializeVeterinarians();
             InitializeForm();
             SelectedTime = null;
@@ -35,8 +34,7 @@ namespace VeterinaryClinic.WinFormsUserInterface
 
         private void InitializeVeterinarians()
         {
-            // Получаем всех ветеринаров из сервиса
-            veterinarians = clinicService.GetAllVeterinarians();
+            _veterinarians = _clinicService.GetAllVeterinarians();
         }
 
         private void InitializeForm()
@@ -44,13 +42,13 @@ namespace VeterinaryClinic.WinFormsUserInterface
             foreach (var cb in GetAllCheckBoxes(this))
             {
                 cb.AutoSize = false;
-                cb.Width = 80;  
+                cb.Width = 80;
                 cb.Height = 24;
             }
-            textBoxPetName.Text = selectedPet.Name;
+            textBoxPetName.Text = _selectedPet.Name;
             textBoxPetName.ReadOnly = true;
 
-            textBoxBreed.Text = selectedPet.Breed;
+            textBoxBreed.Text = _selectedPet.Breed;
             textBoxBreed.ReadOnly = true;
 
             SubscribeToEvents();
@@ -147,7 +145,7 @@ namespace VeterinaryClinic.WinFormsUserInterface
             {
                 SelectedTime = null;
                 SelectedDate = DateTime.MinValue;
-                SelectedVeterinarianId = 0;
+                SelectedVeterinarianId = Guid.Empty;
                 Console.WriteLine("❌ Время не выбрано");
             }
         }
@@ -189,8 +187,8 @@ namespace VeterinaryClinic.WinFormsUserInterface
 
             Reason = textBoxReason.Text.Trim();
 
-            // дополнительная проверка в реальном времени
-            var actualAvailableSlots = clinicService.GetAvailableTimeSlots(SelectedVeterinarianId, SelectedDate);
+            // Дополнительная проверка в реальном времени
+            var actualAvailableSlots = _clinicService.GetAvailableTimeSlots(SelectedVeterinarianId, SelectedDate);
             int selectedHour = int.Parse(SelectedTime.Split('-')[0]);
             bool slotFree = actualAvailableSlots.Any(slot =>
                 slot.Date == SelectedDate.Date &&
@@ -204,13 +202,16 @@ namespace VeterinaryClinic.WinFormsUserInterface
 
             try
             {
-                clinicService.CreateAppointment(
-                    selectedPet.Id,
+                _clinicService.CreateAppointment(
+                    _selectedPet.Id,
                     SelectedVeterinarianId,
                     SelectedDate,
                     SelectedTime,
                     Reason,
-                    selectedPet.Breed);
+                    _selectedPet.Breed,
+                    diagnosis: "",
+                    treatment: "",
+                    notes: "");
 
                 ShowSuccessMessage();
 
@@ -223,7 +224,6 @@ namespace VeterinaryClinic.WinFormsUserInterface
             }
         }
 
-
         private void ShowSuccessMessage()
         {
             string formattedDate = SelectedDate.ToString("dd.MM.yyyy");
@@ -231,8 +231,8 @@ namespace VeterinaryClinic.WinFormsUserInterface
             string veterinarianName = GetVeterinarianName(SelectedVeterinarianId);
 
             MessageBox.Show($"Запись на прием создана успешно!\n\n" +
-                            $"Питомец: {selectedPet.Name}\n" +
-                            $"Порода: {selectedPet.Breed}\n" +
+                            $"Питомец: {_selectedPet.Name}\n" +
+                            $"Порода: {_selectedPet.Breed}\n" +
                             $"Дата: {formattedDate}\n" +
                             $"Время: {formattedTime}\n" +
                             $"Ветеринар: {veterinarianName}\n" +
@@ -253,14 +253,14 @@ namespace VeterinaryClinic.WinFormsUserInterface
             DateTime baseDate = dateTimePickerWeek.Value;
             var allCheckBoxes = GetAllCheckBoxes(this);
 
-            foreach (string day in daysOfWeek)
+            foreach (string day in _daysOfWeek)
             {
                 int dayIdx = GetDayIndex(day);
                 DateTime slotDate = GetNextWeekday(baseDate, dayIdx);
-                int vetId = GetVeterinarianByDay(dayIdx);
+                Guid vetId = GetVeterinarianByDay(dayIdx);
 
-                var availableSlots = clinicService.GetAvailableTimeSlots(vetId, slotDate);
-                foreach (string time in timeIntervals)
+                var availableSlots = _clinicService.GetAvailableTimeSlots(vetId, slotDate);
+                foreach (string time in _timeIntervals)
                 {
                     string checkBoxName = $"checkBox_{day}_{time}";
                     var checkBox = allCheckBoxes.FirstOrDefault(cb => cb.Name == checkBoxName);
@@ -283,9 +283,9 @@ namespace VeterinaryClinic.WinFormsUserInterface
             }
         }
 
-        private Veterinarian GetVeterinarianById(int id)
+        private Veterinarian GetVeterinarianById(Guid id)
         {
-            return veterinarians.FirstOrDefault(v => v.Id == id);
+            return _veterinarians.FirstOrDefault(v => v.Id == id);
         }
 
         private DateTime GetNextWeekday(DateTime start, int dayIndex)
@@ -313,8 +313,7 @@ namespace VeterinaryClinic.WinFormsUserInterface
             }
         }
 
-
-        private int GetVeterinarianByDay(int dayIndex)
+        private Guid GetVeterinarianByDay(int dayIndex)
         {
             DayOfWeek targetDay;
 
@@ -329,17 +328,11 @@ namespace VeterinaryClinic.WinFormsUserInterface
                 default: targetDay = DayOfWeek.Monday; break;
             }
 
-            foreach (var vet in veterinarians)
-            {
-                if (vet.WorkDays.Contains(targetDay))
-                    return vet.Id;
-            }
-
-            return 1; // По умолчанию Иванов
+            var vet = _clinicService.GetVeterinarianByDay(targetDay);
+            return vet?.Id ?? Guid.Empty;
         }
 
-
-        private string GetVeterinarianName(int veterinarianId)
+        private string GetVeterinarianName(Guid veterinarianId)
         {
             var vet = GetVeterinarianById(veterinarianId);
             return vet != null ? vet.FullName : "Неизвестно";

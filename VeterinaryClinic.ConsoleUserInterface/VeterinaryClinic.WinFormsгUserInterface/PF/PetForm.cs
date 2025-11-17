@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
-using VeterinaryClinic.Core.Logic;
 using VeterinaryClinic.Core.Essence;
-using VeterinaryClinic.WinFormsUserInterface;
+using VeterinaryClinic.Core.Logic;
 
 namespace VeterinaryClinic.WinFormsUserInterface
 {
     public partial class PetForm : Form
     {
-        private readonly ClinicService clinicService;
-        private int selectedOwnerId;
-        private List<Appointment> appointments = new List<Appointment>();
+        private readonly ClinicService _clinicService;
+        private Guid _selectedOwnerId;
+        private List<Appointment> _appointments = new List<Appointment>();
 
         /// <summary>
         /// Создает форму для работы с питомцами
@@ -20,7 +20,7 @@ namespace VeterinaryClinic.WinFormsUserInterface
         public PetForm(ClinicService clinicService)
         {
             InitializeComponent();
-            this.clinicService = clinicService;
+            _clinicService = clinicService;
             dataGridViewPets.AutoGenerateColumns = false;
             LoadOwnersComboBox();
         }
@@ -30,21 +30,28 @@ namespace VeterinaryClinic.WinFormsUserInterface
         /// </summary>
         private void LoadOwnersComboBox()
         {
-            var owners = clinicService.GetAllOwners();
-            comboBoxOwners.DataSource = owners;
-            comboBoxOwners.DisplayMember = "FullName";
-            comboBoxOwners.ValueMember = "Id";
+            try
+            {
+                var owners = _clinicService.GetAllOwners();
+                comboBoxOwners.DataSource = owners;
+                comboBoxOwners.DisplayMember = "FullName";
+                comboBoxOwners.ValueMember = "Id";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка загрузки владельцев: " + ex.Message);
+            }
         }
 
         /// <summary>
         /// Загружает список питомцев для выбранного владельца
         /// </summary>
         /// <param name="ownerId">ID владельца</param>
-        private void LoadPets(int ownerId)
+        private void LoadPets(Guid ownerId)
         {
             try
             {
-                var pets = clinicService.GetPetsByOwnerId(ownerId);
+                var pets = _clinicService.GetPetsByOwnerId(ownerId);
                 dataGridViewPets.DataSource = pets;
             }
             catch (Exception ex)
@@ -55,13 +62,10 @@ namespace VeterinaryClinic.WinFormsUserInterface
 
         /// <summary>
         /// Обрабатывает нажатие кнопки "Добавить питомца"
-        /// Открывает форму добавления и сохраняет нового питомца
         /// </summary>
-        /// <param name="sender">Источник события</param>
-        /// <param name="e">Данные события</param>
         private void btnAddPet_Click(object sender, EventArgs e)
         {
-            if (selectedOwnerId == 0)
+            if (_selectedOwnerId == Guid.Empty)
             {
                 MessageBox.Show("Выберите владельца!");
                 return;
@@ -72,8 +76,8 @@ namespace VeterinaryClinic.WinFormsUserInterface
             {
                 try
                 {
-                    clinicService.CreatePet(addForm.Name, addForm.Species, addForm.Breed, selectedOwnerId);
-                    LoadPets(selectedOwnerId);
+                    _clinicService.CreatePet(addForm.Name, addForm.Species, addForm.Breed, _selectedOwnerId);
+                    LoadPets(_selectedOwnerId);
                     MessageBox.Show("Питомец добавлен!");
                 }
                 catch (Exception ex)
@@ -85,10 +89,7 @@ namespace VeterinaryClinic.WinFormsUserInterface
 
         /// <summary>
         /// Обрабатывает нажатие кнопки "Редактировать питомца"
-        /// Открывает форму редактирования и обновляет данные питомца
         /// </summary>
-        /// <param name="sender">Источник события</param>
-        /// <param name="e">Данные события</param>
         private void btnEditPet_Click(object sender, EventArgs e)
         {
             if (dataGridViewPets.CurrentRow?.DataBoundItem is Pet selectedPet)
@@ -105,8 +106,8 @@ namespace VeterinaryClinic.WinFormsUserInterface
                             editForm.Breed,
                             selectedPet.OwnerId);
 
-                        clinicService.UpdatePet(updatedPet);
-                        LoadPets(selectedOwnerId);
+                        _clinicService.UpdatePet(updatedPet);
+                        LoadPets(_selectedOwnerId);
                         MessageBox.Show("Данные обновлены!");
                     }
                     catch (Exception ex)
@@ -123,10 +124,7 @@ namespace VeterinaryClinic.WinFormsUserInterface
 
         /// <summary>
         /// Обрабатывает нажатие кнопки "Удалить питомца"
-        /// Удаляет питомца после подтверждения
         /// </summary>
-        /// <param name="sender">Источник события</param>
-        /// <param name="e">Данные события</param>
         private void btnDeletePet_Click(object sender, EventArgs e)
         {
             if (dataGridViewPets.CurrentRow?.DataBoundItem is Pet selectedPet)
@@ -135,9 +133,9 @@ namespace VeterinaryClinic.WinFormsUserInterface
                 {
                     try
                     {
-                        if (clinicService.DeletePet(selectedPet.Id))
+                        if (_clinicService.DeletePet(selectedPet.Id))
                         {
-                            LoadPets(selectedOwnerId);
+                            LoadPets(_selectedOwnerId);
                             MessageBox.Show("Питомец удален!");
                         }
                     }
@@ -155,32 +153,24 @@ namespace VeterinaryClinic.WinFormsUserInterface
 
         /// <summary>
         /// Обрабатывает изменение выбранного владельца в выпадающем списке
-        /// Загружает питомцев выбранного владельца
         /// </summary>
-        /// <param name="sender">Источник события</param>
-        /// <param name="e">Данные события</param>
         private void comboBoxOwners_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxOwners.SelectedValue != null &&
-                comboBoxOwners.SelectedValue is int ownerId)
+            if (comboBoxOwners.SelectedValue != null && comboBoxOwners.SelectedValue is Guid ownerId)
             {
-                selectedOwnerId = ownerId;
+                _selectedOwnerId = ownerId;
                 LoadPets(ownerId);
             }
         }
 
         /// <summary>
         /// Обрабатывает нажатие кнопки "Запись на прием"
-        /// Открывает форму записи на прием для выбранного питомца
         /// </summary>
-        /// <param name="sender">Источник события</param>
-        /// <param name="e">Данные события</param>
         private void btnCreateAppointment_Click(object sender, EventArgs e)
         {
-            if (dataGridViewPets.SelectedRows.Count > 0)
+            if (dataGridViewPets.SelectedRows.Count > 0 && dataGridViewPets.SelectedRows[0].DataBoundItem is Pet selectedPet)
             {
-                Pet selectedPet = (Pet)dataGridViewPets.SelectedRows[0].DataBoundItem;
-                var appointmentForm = new AppointmentForm(clinicService, selectedPet);
+                var appointmentForm = new AppointmentForm(_clinicService, selectedPet);
                 appointmentForm.ShowDialog();
             }
             else
@@ -191,20 +181,32 @@ namespace VeterinaryClinic.WinFormsUserInterface
 
         /// <summary>
         /// Обрабатывает нажатие кнопки "История посещений"
-        /// Открывает форму с историей посещений для выбранного питомца
         /// </summary>
-        /// <param name="sender">Источник события</param>
-        /// <param name="e">Данные события</param>
+        /// <summary>
+        /// Обрабатывает нажатие кнопки "История посещений"
+        /// </summary>
         private void buttonShowHistory_Click(object sender, EventArgs e)
         {
-            if (dataGridViewPets.SelectedRows.Count > 0)
+            if (dataGridViewPets.SelectedRows.Count > 0 && dataGridViewPets.SelectedRows[0].DataBoundItem is Pet selectedPet)
             {
-                var selectedPet = (Pet)dataGridViewPets.SelectedRows[0].DataBoundItem;
+                try
+                {
+                    // Получаем историю через владельца (как в консольной версии)
+                    var owner = _clinicService.FindOwnersByName("").Find(o => o.Id == selectedPet.OwnerId);
+                    if (owner != null)
+                    {
+                        var history = _clinicService.GetVisitHistoryByOwner(owner.FullName);
+                        var petHistory = history.Where(h => h.PetId == selectedPet.Id).ToList();
 
-                var petAppointments = clinicService.GetAppointmentsByPetId(selectedPet.Id);
-
-                var historyForm = new PetHistoryForm(clinicService, selectedPet, petAppointments);
-                historyForm.ShowDialog();
+                        // Создаем форму с историей посещений (VisitHistory)
+                        var historyForm = new PetHistoryForm(_clinicService, selectedPet, petHistory);
+                        historyForm.ShowDialog();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ошибка загрузки истории: " + ex.Message);
+                }
             }
             else
             {
@@ -215,10 +217,7 @@ namespace VeterinaryClinic.WinFormsUserInterface
 
         /// <summary>
         /// Обрабатывает нажатие кнопки "Назад"
-        /// Закрывает текущую форму
         /// </summary>
-        /// <param name="sender">Источник события</param>
-        /// <param name="e">Данные события</param>
         private void btnBack_Click(object sender, EventArgs e)
         {
             Close();
@@ -227,11 +226,9 @@ namespace VeterinaryClinic.WinFormsUserInterface
         /// <summary>
         /// Обрабатывает событие загрузки формы
         /// </summary>
-        /// <param name="sender">Источник события</param>
-        /// <param name="e">Данные события</param>
         private void PetForm_Load(object sender, EventArgs e)
         {
-
+            // Дополнительная инициализация если нужно
         }
     }
 }

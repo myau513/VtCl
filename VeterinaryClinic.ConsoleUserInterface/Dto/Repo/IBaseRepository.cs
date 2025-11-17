@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Dto.Repo
 {
-    public interface IRepositoryDto<T> where T : class
+    public interface IBaseRepository<T> where T : class
     {
         IEnumerable<T> GetAll();
         T GetById(Guid id);

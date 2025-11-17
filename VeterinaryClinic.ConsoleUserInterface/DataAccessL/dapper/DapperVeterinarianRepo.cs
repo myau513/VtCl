@@ -11,14 +11,20 @@ namespace DataAccessL.dapper
 {
     public class DapperVeterinarianRepo : IRepository<VeterinarianDto>
     {
-        static string connectionString = "data source=(localhost)\\SQLLocalDB;Initial Catalog=DbConnection;Integrated Security=True";
-        IDbConnection db = new SqlConnection(connectionString);
+        private readonly string _connectionString;
+
+        public DapperVeterinarianRepo(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
 
         public void Create(VeterinarianDto veterinariandto)
         {
-            var sqlQuery = "INSERT INTO Veterinarians (Id, FullName, WorkDaysString) " +
-                           "VALUES(@Id, @FullName, @WorkDaysString)";
-            db.Execute(sqlQuery, veterinariandto);
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var sqlQuery = "INSERT INTO Veterinarians (Id, FullName, WorkDaysString) VALUES(@Id, @FullName, @WorkDaysString)";
+                db.Execute(sqlQuery, veterinariandto);
+            }
         }
 
         public void Add(VeterinarianDto item)
@@ -28,34 +34,46 @@ namespace DataAccessL.dapper
 
         public void Delete(Guid id)
         {
-            var sqlQuery = "DELETE FROM Veterinarians WHERE Id = @id";
-            db.Execute(sqlQuery, new { id });
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var sqlQuery = "DELETE FROM Veterinarians WHERE Id = @id";
+                db.Execute(sqlQuery, new { id });
+            }
         }
 
         public void Dispose()
         {
-            db?.Dispose();
+            // Для Dapper обычно не нужно
         }
 
         public IEnumerable<VeterinarianDto> GetAll()
         {
-            return db.Query<VeterinarianDto>("SELECT * FROM Veterinarians").ToList();
+            using (var db = new SqlConnection(_connectionString))
+            {
+                return db.Query<VeterinarianDto>("SELECT * FROM Veterinarians").ToList();
+            }
         }
 
         public VeterinarianDto GetById(Guid id)
         {
-            return db.Query<VeterinarianDto>("SELECT * FROM Veterinarians WHERE Id = @id", new { id }).FirstOrDefault();
+            using (var db = new SqlConnection(_connectionString))
+            {
+                return db.Query<VeterinarianDto>("SELECT * FROM Veterinarians WHERE Id = @id", new { id }).FirstOrDefault();
+            }
         }
 
         public void Save()
         {
-            // For Dapper, Save is typically not needed as operations are executed immediately
+            // For Dapper, Save is typically not needed
         }
 
         public void Update(VeterinarianDto item)
         {
-            var sqlQuery = "UPDATE Veterinarians SET FullName = @FullName, WorkDaysString = @WorkDaysString WHERE Id = @Id";
-            db.Execute(sqlQuery, item);
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var sqlQuery = "UPDATE Veterinarians SET FullName = @FullName, WorkDaysString = @WorkDaysString WHERE Id = @Id";
+                db.Execute(sqlQuery, item);
+            }
         }
     }
 }

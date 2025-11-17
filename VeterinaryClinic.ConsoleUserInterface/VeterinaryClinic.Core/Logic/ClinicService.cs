@@ -10,24 +10,24 @@ namespace VeterinaryClinic.Core.Logic
 {
     public class ClinicService
     {
-        private readonly IRepositoryDto<OwnerDto> _ownerRepository;
-        private readonly IRepositoryDto<PetDto> _petRepository;
-        private readonly IRepositoryDto<VeterinarianDto> _vetRepository;
-        private readonly IRepositoryDto<AppointmentDto> _appointmentRepository;
-        private readonly IRepositoryDto<VisitHistoryDto> _visitHistoryRepository;
+        private readonly IBaseRepository<OwnerDto> _ownerRepo;
+        private readonly IBaseRepository<PetDto> _petRepo;
+        private readonly IBaseRepository<VeterinarianDto> _vetRepo;
+        private readonly IBaseRepository<AppointmentDto> _appointmentRepo;
+        private readonly IBaseRepository<VisitHistoryDto> _visitHistoryRepo;
 
         public ClinicService(
-            IRepositoryDto<OwnerDto> ownerRepository,
-            IRepositoryDto<PetDto> petRepository,
-            IRepositoryDto<VeterinarianDto> vetRepository,
-            IRepositoryDto<AppointmentDto> appointmentRepository,
-            IRepositoryDto<VisitHistoryDto> visitHistoryRepository)
+            IBaseRepository<OwnerDto> ownerRepo,
+            IBaseRepository<PetDto> petRepo,
+            IBaseRepository<VeterinarianDto> vetRepo,
+            IBaseRepository<AppointmentDto> appointmentRepo,
+            IBaseRepository<VisitHistoryDto> visitHistoryRepo)
         {
-            _ownerRepository = ownerRepository;
-            _petRepository = petRepository;
-            _vetRepository = vetRepository;
-            _appointmentRepository = appointmentRepository;
-            _visitHistoryRepository = visitHistoryRepository;
+            _ownerRepo = ownerRepo;
+            _petRepo = petRepo;
+            _vetRepo = vetRepo;
+            _appointmentRepo = appointmentRepo;
+            _visitHistoryRepo = visitHistoryRepo;
         }
 
         // === Владельцы ===
@@ -36,40 +36,39 @@ namespace VeterinaryClinic.Core.Logic
         {
             var owner = new Owner(Guid.NewGuid(), fullName, phoneNumber);
             var ownerDto = OwnerMapper.ToDto(owner);
-            _ownerRepository.Add(ownerDto);
-            _ownerRepository.Save();
+            _ownerRepo.Add(ownerDto);
+            _ownerRepo.Save();
             return owner;
         }
 
         public List<Owner> FindOwnersByName(string name)
         {
-            var allOwners = _ownerRepository.GetAll();
+            var allOwners = _ownerRepo.GetAll();
             var filteredOwners = allOwners.Where(o =>
                 !string.IsNullOrEmpty(o.FullName) &&
                 o.FullName.IndexOf(name, StringComparison.OrdinalIgnoreCase) >= 0);
             return filteredOwners.Select(OwnerMapper.ToDomain).ToList();
         }
 
-
         public List<Owner> GetAllOwners()
         {
-            var allOwners = _ownerRepository.GetAll();
+            var allOwners = _ownerRepo.GetAll();
             return allOwners.Select(OwnerMapper.ToDomain).ToList();
         }
 
         public void UpdateOwner(Owner owner)
         {
             var dto = OwnerMapper.ToDto(owner);
-            _ownerRepository.Update(dto);
-            _ownerRepository.Save();
+            _ownerRepo.Update(dto);
+            _ownerRepo.Save();
         }
 
         public bool DeleteOwner(Guid ownerId)
         {
             try
             {
-                _ownerRepository.Delete(ownerId);
-                _ownerRepository.Save();
+                _ownerRepo.Delete(ownerId);
+                _ownerRepo.Save();
                 return true;
             }
             catch
@@ -84,20 +83,20 @@ namespace VeterinaryClinic.Core.Logic
         {
             var pet = new Pet(Guid.NewGuid(), name, species, breed, ownerId);
             var dto = PetMapper.ToDto(pet);
-            _petRepository.Add(dto);
-            _petRepository.Save();
+            _petRepo.Add(dto);
+            _petRepo.Save();
             return pet;
         }
 
         public List<Pet> GetPetsByOwnerId(Guid ownerId)
         {
-            var pets = _petRepository.GetAll().Where(p => p.OwnerId == ownerId);
+            var pets = _petRepo.GetAll().Where(p => p.OwnerId == ownerId);
             return pets.Select(PetMapper.ToDomain).ToList();
         }
 
         public List<Pet> GetAllPets()
         {
-            return _petRepository.GetAll()
+            return _petRepo.GetAll()
                 .Select(PetMapper.ToDomain)
                 .ToList();
         }
@@ -105,16 +104,16 @@ namespace VeterinaryClinic.Core.Logic
         public void UpdatePet(Pet pet)
         {
             var dto = PetMapper.ToDto(pet);
-            _petRepository.Update(dto);
-            _petRepository.Save();
+            _petRepo.Update(dto);
+            _petRepo.Save();
         }
 
         public bool DeletePet(Guid petId)
         {
             try
             {
-                _petRepository.Delete(petId);
-                _petRepository.Save();
+                _petRepo.Delete(petId);
+                _petRepo.Save();
                 return true;
             }
             catch
@@ -127,14 +126,16 @@ namespace VeterinaryClinic.Core.Logic
 
         public Veterinarian GetVeterinarianByDay(DayOfWeek day)
         {
-            var allVets = _vetRepository.GetAll();
-            var vetDto = allVets.FirstOrDefault(v => v.WorkDaysString.Split(',').Contains(day.ToString()));
+            var allVets = _vetRepo.GetAll();
+            var vetDto = allVets.FirstOrDefault(v =>
+                !string.IsNullOrEmpty(v.WorkDaysString) &&
+                v.WorkDaysString.Split(',').Contains(day.ToString()));
             return vetDto == null ? null : VeterinarianMapper.ToDomain(vetDto);
         }
 
         public List<Veterinarian> GetAllVeterinarians()
         {
-            return _vetRepository.GetAll()
+            return _vetRepo.GetAll()
                 .Select(VeterinarianMapper.ToDomain)
                 .ToList();
         }
@@ -164,8 +165,10 @@ namespace VeterinaryClinic.Core.Logic
 
         private bool IsTimeSlotAvailable(Guid vetId, DateTime slot)
         {
-            var appointments = _appointmentRepository.GetAll()
-                .Where(a => a.VeterinarianId == vetId && a.AppointmentDate == slot.Date && a.TimeSlot == slot.ToString("HH:mm"));
+            var appointments = _appointmentRepo.GetAll()
+                .Where(a => a.VeterinarianId == vetId &&
+                           a.AppointmentDate.Date == slot.Date &&
+                           a.TimeSlot == slot.ToString("HH:mm"));
             return !appointments.Any();
         }
 
@@ -175,14 +178,14 @@ namespace VeterinaryClinic.Core.Logic
         {
             var appointment = new Appointment(Guid.NewGuid(), petId, vetId, appointmentDate, timeSlot, reason, breed);
             var appointmentDto = AppointmentMapper.ToDto(appointment);
-            _appointmentRepository.Add(appointmentDto);
-            _appointmentRepository.Save();
+            _appointmentRepo.Add(appointmentDto);
+            _appointmentRepo.Save();
 
             var vet = GetVeterinarian(vetId);
             var visitHistory = new VisitHistory(Guid.NewGuid(), petId, vet.FullName, appointmentDate, reason, diagnosis, treatment, notes);
             var visitHistoryDto = VisitHistoryMapper.ToDto(visitHistory);
-            _visitHistoryRepository.Add(visitHistoryDto);
-            _visitHistoryRepository.Save();
+            _visitHistoryRepo.Add(visitHistoryDto);
+            _visitHistoryRepo.Save();
 
             return appointment;
         }
@@ -191,19 +194,19 @@ namespace VeterinaryClinic.Core.Logic
 
         public Pet GetPet(Guid petId)
         {
-            var petDto = _petRepository.GetById(petId);
+            var petDto = _petRepo.GetById(petId);
             return petDto == null ? null : PetMapper.ToDomain(petDto);
         }
 
         public Veterinarian GetVeterinarian(Guid vetId)
         {
-            var vetDto = _vetRepository.GetById(vetId);
+            var vetDto = _vetRepo.GetById(vetId);
             return vetDto == null ? null : VeterinarianMapper.ToDomain(vetDto);
         }
 
         public List<Appointment> GetAppointmentsByDate(DateTime date)
         {
-            return _appointmentRepository.GetAll()
+            return _appointmentRepo.GetAll()
                 .Where(a => a.AppointmentDate.Date == date.Date)
                 .Select(AppointmentMapper.ToDomain)
                 .ToList();
@@ -235,7 +238,7 @@ namespace VeterinaryClinic.Core.Logic
             var allHistory = new List<VisitHistory>();
             foreach (var pet in pets)
             {
-                var petHistory = _visitHistoryRepository.GetAll()
+                var petHistory = _visitHistoryRepo.GetAll()
                     .Where(h => h.PetId == pet.Id)
                     .Select(VisitHistoryMapper.ToDomain)
                     .ToList();

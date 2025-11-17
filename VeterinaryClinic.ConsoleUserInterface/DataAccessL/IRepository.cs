@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Dto.Repo;
+using System;
 using System.Collections.Generic;
 
 namespace DataAccessL
 {
-    public interface IRepository<T> : IDisposable where T : class
+    public interface IRepository<T> : IBaseRepository<T>, IDisposable where T : class
     {
         /// <summary>
         /// Возвращает все сущности

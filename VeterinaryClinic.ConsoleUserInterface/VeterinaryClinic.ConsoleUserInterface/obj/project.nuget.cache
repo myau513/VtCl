@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "w8+WewN1YcQ=",
+  "dgSpecHash": "NwzBMxhTmmg=",
   "success": true,
   "projectFilePath": "C:\\Users\\настя\\source\\repos\\VetClinic_Repo\\VtCl\\VeterinaryClinic.ConsoleUserInterface\\VeterinaryClinic.ConsoleUserInterface\\VeterinaryClinic.ConsoleUserInterface.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\настя\\.nuget\\packages\\dapper\\2.1.66\\dapper.2.1.66.nupkg.sha512",
     "C:\\Users\\настя\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\1.1.1\\microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512",
     "C:\\Users\\настя\\.nuget\\packages\\microsoft.bcl.hashcode\\1.1.1\\microsoft.bcl.hashcode.1.1.1.nupkg.sha512",
     "C:\\Users\\настя\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",

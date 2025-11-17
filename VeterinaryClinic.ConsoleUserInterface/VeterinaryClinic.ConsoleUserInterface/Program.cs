@@ -1,8 +1,9 @@
 ﻿using DataAccessL;
 using DataAccessL.dapper;
 using DataAccessL.Ef;
+using Dto.Essence;
+using Dto.Repo;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -87,18 +88,18 @@ namespace VeterinaryClinic.ConsoleUserInterface
 
             if (useDapper)
             {
-                // Настройка Dapper
-                var ownerRepo = new DapperOwnerRepo(connectionString);
-                var petRepo = new DapperPetRepo(connectionString);
-                var vetRepo = new DapperVeterinarianRepo(connectionString);
-                var appointmentRepo = new DapperAppointmentRepo(connectionString);
-                var visitHistoryRepo = new DapperVisitHistoryRepo(connectionString);
+                // Настройка Dapper репозиториев
+                IBaseRepository<OwnerDto> ownerRepo = new DapperOwnerRepo(connectionString);
+                IBaseRepository<PetDto> petRepo = new DapperPetRepo(connectionString);
+                IBaseRepository<VeterinarianDto> vetRepo = new DapperVeterinarianRepo(connectionString);
+                IBaseRepository<AppointmentDto> appointmentRepo = new DapperAppointmentRepo(connectionString);
+                IBaseRepository<VisitHistoryDto> visitHistoryRepo = new DapperVisitHistoryRepo(connectionString);
 
                 _clinicService = new ClinicService(ownerRepo, petRepo, vetRepo, appointmentRepo, visitHistoryRepo);
             }
             else
             {
-                // Настройка EF
+                // Настройка EF репозиториев
                 var options = new DbContextOptionsBuilder<Context>()
                     .UseSqlServer(connectionString)
                     .Options;
@@ -106,11 +107,11 @@ namespace VeterinaryClinic.ConsoleUserInterface
                 var context = new Context(options);
                 context.Database.EnsureCreated();
 
-                var ownerRepo = new EfOwnerRepo(context);
-                var petRepo = new EfPetRepo(context);
-                var vetRepo = new EfVeterinarianRepo(context);
-                var appointmentRepo = new EfAppointmentRepo(context);
-                var visitHistoryRepo = new EfVisitHistoryRepo(context);
+                IBaseRepository<OwnerDto> ownerRepo = new EfOwnerRepo(context);
+                IBaseRepository<PetDto> petRepo = new EfPetRepo(context);
+                IBaseRepository<VeterinarianDto> vetRepo = new EfVeterinarianRepo(context);
+                IBaseRepository<AppointmentDto> appointmentRepo = new EfAppointmentRepo(context);
+                IBaseRepository<VisitHistoryDto> visitHistoryRepo = new EfVisitHistoryRepo(context);
 
                 _clinicService = new ClinicService(ownerRepo, petRepo, vetRepo, appointmentRepo, visitHistoryRepo);
             }
@@ -656,7 +657,6 @@ namespace VeterinaryClinic.ConsoleUserInterface
                     treatment: "",
                     notes: "");
 
-
                 Console.WriteLine("✅ Запись успешно создана:");
                 Console.WriteLine($"👤 Владелец: {selectedOwner.FullName}");
                 Console.WriteLine($"🐾 Питомец: {selectedPet.Name}");
@@ -788,5 +788,6 @@ namespace VeterinaryClinic.ConsoleUserInterface
             Console.WriteLine("Нажмите любую клавишу для возврата...");
             Console.ReadKey();
         }
+
     }
 }

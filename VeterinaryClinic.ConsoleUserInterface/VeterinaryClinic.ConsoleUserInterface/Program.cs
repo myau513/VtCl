@@ -143,12 +143,20 @@ namespace VeterinaryClinic.ConsoleUserInterface
                     {
                         Console.WriteLine("📦 База не существует, создаем...");
                         context.Database.EnsureCreated();
+                        InitializeVeterinarians(context); // ДОБАВЬТЕ ЭТУ СТРОКУ
                         Console.WriteLine("✅ База данных и таблицы созданы успешно!");
                     }
                     else
                     {
                         // Если база существует, применяем миграции или создаем таблицы
                         context.Database.EnsureCreated();
+
+                        // ДОБАВЬТЕ ЭТИ СТРОКИ:
+                        if (!context.Veterinarians.Any())
+                        {
+                            InitializeVeterinarians(context);
+                        }
+
                         Console.WriteLine("✅ База данных подключена, таблицы проверены.");
                     }
 
@@ -164,6 +172,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
                         Console.WriteLine("⚠️ Таблица Owners не найдена, пересоздаем базу...");
                         context.Database.EnsureDeleted();
                         context.Database.EnsureCreated();
+                        InitializeVeterinarians(context); // ДОБАВЬТЕ ЭТУ СТРОКУ
                         Console.WriteLine("✅ База пересоздана успешно!");
                     }
                 }
@@ -174,6 +183,37 @@ namespace VeterinaryClinic.ConsoleUserInterface
                 throw;
             }
         }
+
+        static void InitializeVeterinarians(Context context)
+        {
+            if (context.Veterinarians.Any())
+            {
+                Console.WriteLine("✅ Ветеринары уже есть в базе.");
+                return;
+            }
+
+            var veterinarians = new[]
+            {
+                new { Name = "Иванов И.И.", Days = new[] { DayOfWeek.Monday, DayOfWeek.Thursday } },
+                new { Name = "Петров П.П.", Days = new[] { DayOfWeek.Tuesday, DayOfWeek.Friday } },
+                new { Name = "Сидоров С.С.", Days = new[] { DayOfWeek.Wednesday, DayOfWeek.Saturday } }
+             };
+
+            foreach (var vet in veterinarians)
+            {
+                var vetDto = new VeterinarianDto
+                {
+                    Id = Guid.NewGuid(),
+                    FullName = vet.Name,
+                    WorkDaysString = string.Join(",", vet.Days.Select(d => d.ToString()))
+                };
+                context.Veterinarians.Add(vetDto);
+            }
+
+            context.SaveChanges();
+            Console.WriteLine($"✅ Добавлено {veterinarians.Length} ветеринаров в базу.");
+        }
+
 
         static void OwnerMenu()
         {

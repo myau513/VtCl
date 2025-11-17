@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using VeterinaryClinic.Core.Essence;
 using VeterinaryClinic.Core.Logic;
+using Microsoft.SqlServer;
+using System.Data.SqlClient;
 
 namespace VeterinaryClinic.ConsoleUserInterface
 {
@@ -91,7 +93,10 @@ namespace VeterinaryClinic.ConsoleUserInterface
 
             if (useDapper)
             {
-                // Настройка Dapper репозиториев
+                // Для Dapper сначала создаем базу через EF
+                CreateDatabaseWithEF(connectionString);
+
+                // Затем настраиваем Dapper репозитории
                 IBaseRepository<OwnerDto> ownerRepo = new DapperOwnerRepo(connectionString);
                 IBaseRepository<PetDto> petRepo = new DapperPetRepo(connectionString);
                 IBaseRepository<VeterinarianDto> vetRepo = new DapperVeterinarianRepo(connectionString);
@@ -108,7 +113,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
                     .Options;
 
                 var context = new Context(options);
-                context.Database.EnsureCreated();
+                CreateDatabaseWithEF(connectionString);
 
                 IBaseRepository<OwnerDto> ownerRepo = new EfOwnerRepo(context);
                 IBaseRepository<PetDto> petRepo = new EfPetRepo(context);
@@ -117,6 +122,56 @@ namespace VeterinaryClinic.ConsoleUserInterface
                 IBaseRepository<VisitHistoryDto> visitHistoryRepo = new EfVisitHistoryRepo(context);
 
                 _clinicService = new ClinicService(ownerRepo, petRepo, vetRepo, appointmentRepo, visitHistoryRepo);
+            }
+        }
+
+        // Новый метод для создания базы данных
+        static void CreateDatabaseWithEF(string connectionString)
+        {
+            try
+            {
+                var options = new DbContextOptionsBuilder<Context>()
+                    .UseSqlServer(connectionString)
+                    .Options;
+
+                using (var context = new Context(options))
+                {
+                    Console.WriteLine("🔄 Создание/проверка базы данных...");
+
+                    // Убедимся, что база существует и таблицы созданы
+                    if (!context.Database.CanConnect())
+                    {
+                        Console.WriteLine("📦 База не существует, создаем...");
+                        context.Database.EnsureCreated();
+                        Console.WriteLine("✅ База данных и таблицы созданы успешно!");
+                    }
+                    else
+                    {
+                        // Если база существует, применяем миграции или создаем таблицы
+                        context.Database.EnsureCreated();
+                        Console.WriteLine("✅ База данных подключена, таблицы проверены.");
+                    }
+
+                    // Альтернативный способ проверки существования таблицы Owners
+                    try
+                    {
+                        // Пробуем выполнить простой запрос к таблице Owners
+                        var testQuery = context.Owners.Take(1).Count();
+                        Console.WriteLine("✅ Таблица Owners существует и доступна.");
+                    }
+                    catch
+                    {
+                        Console.WriteLine("⚠️ Таблица Owners не найдена, пересоздаем базу...");
+                        context.Database.EnsureDeleted();
+                        context.Database.EnsureCreated();
+                        Console.WriteLine("✅ База пересоздана успешно!");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Ошибка при создании базы: {ex.Message}");
+                throw;
             }
         }
 

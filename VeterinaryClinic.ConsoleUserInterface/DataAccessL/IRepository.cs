@@ -9,12 +9,14 @@ namespace DataAccessL
         /// <summary>
         /// Возвращает все сущности
         /// </summary>
+        /// <returns>Коллекция всех сущностей</returns>
         IEnumerable<T> GetAll();
 
         /// <summary>
         /// Возвращает сущность по айди
         /// </summary>
         /// <param name="id">Идентификатор сущности</param>
+        /// <returns>Найденная сущность</returns>
         T GetById(Guid id);
 
         /// <summary>
@@ -35,6 +37,9 @@ namespace DataAccessL
         /// <param name="id">Уникальный идентификатор сущности</param>
         void Delete(Guid id);
 
+        /// <summary>
+        /// Сохраняет изменения в базе данных
+        /// </summary>
         void Save();
     }
 }

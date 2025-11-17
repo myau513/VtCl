@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("VeterinaryClinic.ConsoleUserInterface")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cf840af09c0dfcae4882b323e8c0adf56be1a43b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+82738dd80f10aec0ced24d0c54cfc8ab7d6ec866")]
 [assembly: System.Reflection.AssemblyProductAttribute("VeterinaryClinic.ConsoleUserInterface")]
 [assembly: System.Reflection.AssemblyTitleAttribute("VeterinaryClinic.ConsoleUserInterface")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

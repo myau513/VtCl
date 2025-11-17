@@ -13,6 +13,9 @@ namespace DataAccessL.dapper
     {
         private readonly string _connectionString;
 
+        /// <summary>
+        /// Статический конструктор для настройки обработчиков типов
+        /// </summary>
         static DapperAppointmentRepo()
         {
             SqlMapper.RemoveTypeMap(typeof(Guid));
@@ -20,11 +23,19 @@ namespace DataAccessL.dapper
             SqlMapper.AddTypeHandler(new GuidTypeHandler());
         }
 
+        /// <summary>
+        /// Инициализирует репозиторий с строкой подключения
+        /// </summary>
+        /// <param name="connectionString">Строка подключения к базе данных</param>
         public DapperAppointmentRepo(string connectionString)
         {
             _connectionString = connectionString;
         }
 
+        /// <summary>
+        /// Создает новую запись назначения
+        /// </summary>
+        /// <param name="appointmentdto">DTO назначения для создания</param>
         public void Create(AppointmentDto appointmentdto)
         {
             using (var db = new SqlConnection(_connectionString))
@@ -35,11 +46,19 @@ namespace DataAccessL.dapper
             }
         }
 
+        /// <summary>
+        /// Добавляет новую сущность (алиас для Create)
+        /// </summary>
+        /// <param name="item">Добавляемая сущность</param>
         public void Add(AppointmentDto item)
         {
             Create(item);
         }
 
+        /// <summary>
+        /// Удаляет запись назначения по идентификатору
+        /// </summary>
+        /// <param name="id">Идентификатор удаляемой записи</param>
         public void Delete(Guid id)
         {
             using (var db = new SqlConnection(_connectionString))
@@ -49,11 +68,17 @@ namespace DataAccessL.dapper
             }
         }
 
+        /// <summary>
+        /// Освобождает ресурсы 
+        /// </summary>
         public void Dispose()
         {
-            // Для Dapper обычно не нужно
         }
 
+        /// <summary>
+        /// Возвращает все записи назначений
+        /// </summary>
+        /// <returns>Коллекция всех назначений</returns>
         public IEnumerable<AppointmentDto> GetAll()
         {
             using (var db = new SqlConnection(_connectionString))
@@ -62,6 +87,11 @@ namespace DataAccessL.dapper
             }
         }
 
+        /// <summary>
+        /// Находит запись назначения по идентификатору
+        /// </summary>
+        /// <param name="id">Идентификатор назначения</param>
+        /// <returns>Найденное назначение или null</returns>
         public AppointmentDto GetById(Guid id)
         {
             using (var db = new SqlConnection(_connectionString))
@@ -71,11 +101,17 @@ namespace DataAccessL.dapper
             }
         }
 
+        /// <summary>
+        /// Сохраняет изменения 
+        /// </summary>
         public void Save()
         {
-            // For Dapper, Save is typically not needed
         }
 
+        /// <summary>
+        /// Обновляет существующую запись назначения
+        /// </summary>
+        /// <param name="item">DTO назначения для обновления</param>
         public void Update(AppointmentDto item)
         {
             using (var db = new SqlConnection(_connectionString))

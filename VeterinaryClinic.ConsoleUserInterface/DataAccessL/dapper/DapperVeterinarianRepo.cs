@@ -13,6 +13,9 @@ namespace DataAccessL.dapper
     {
         private readonly string _connectionString;
 
+        /// <summary>
+        /// Статический конструктор для настройки обработчиков типов
+        /// </summary>
         static DapperVeterinarianRepo()
         {
             SqlMapper.RemoveTypeMap(typeof(Guid));
@@ -20,11 +23,19 @@ namespace DataAccessL.dapper
             SqlMapper.AddTypeHandler(new GuidTypeHandler());
         }
 
+        /// <summary>
+        /// Инициализирует репозиторий с строкой подключения
+        /// </summary>
+        /// <param name="connectionString">Строка подключения к базе данных</param>
         public DapperVeterinarianRepo(string connectionString)
         {
             _connectionString = connectionString;
         }
 
+        /// <summary>
+        /// Создает новую запись ветеринара
+        /// </summary>
+        /// <param name="veterinariandto">DTO ветеринара для создания</param>
         public void Create(VeterinarianDto veterinariandto)
         {
             using (var db = new SqlConnection(_connectionString))
@@ -34,11 +45,19 @@ namespace DataAccessL.dapper
             }
         }
 
+        /// <summary>
+        /// Добавляет новую сущность (алиас для Create)
+        /// </summary>
+        /// <param name="item">Добавляемая сущность</param>
         public void Add(VeterinarianDto item)
         {
             Create(item);
         }
 
+        /// <summary>
+        /// Удаляет запись ветеринара по идентификатору
+        /// </summary>
+        /// <param name="id">Идентификатор удаляемой записи</param>
         public void Delete(Guid id)
         {
             using (var db = new SqlConnection(_connectionString))
@@ -48,11 +67,17 @@ namespace DataAccessL.dapper
             }
         }
 
+        /// <summary>
+        /// Освобождает ресурсы
+        /// </summary>
         public void Dispose()
         {
-            // Для Dapper обычно не нужно
         }
 
+        /// <summary>
+        /// Возвращает все записи ветеринаров
+        /// </summary>
+        /// <returns>Коллекция всех ветеринаров</returns>
         public IEnumerable<VeterinarianDto> GetAll()
         {
             using (var db = new SqlConnection(_connectionString))
@@ -61,6 +86,11 @@ namespace DataAccessL.dapper
             }
         }
 
+        /// <summary>
+        /// Находит запись ветеринара по идентификатору
+        /// </summary>
+        /// <param name="id">Идентификатор ветеринара</param>
+        /// <returns>Найденный ветеринар или null</returns>
         public VeterinarianDto GetById(Guid id)
         {
             using (var db = new SqlConnection(_connectionString))
@@ -70,11 +100,17 @@ namespace DataAccessL.dapper
             }
         }
 
+        /// <summary>
+        /// Сохраняет изменения
+        /// </summary>
         public void Save()
         {
-            // For Dapper, Save is typically not needed
         }
 
+        /// <summary>
+        /// Обновляет существующую запись ветеринара
+        /// </summary>
+        /// <param name="item">DTO ветеринара для обновления</param>
         public void Update(VeterinarianDto item)
         {
             using (var db = new SqlConnection(_connectionString))

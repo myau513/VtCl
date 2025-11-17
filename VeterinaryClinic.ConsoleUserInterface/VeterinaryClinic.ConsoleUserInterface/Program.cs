@@ -18,6 +18,10 @@ namespace VeterinaryClinic.ConsoleUserInterface
     {
         private static ClinicService _clinicService;
 
+        /// <summary>
+        /// Главная точка входа в приложение
+        /// </summary>
+        /// <param name="args">Аргументы командной строки</param>
         static void Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
@@ -45,7 +49,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
                 Console.WriteLine("3. Запись на прием");
                 Console.WriteLine("4. История визитов питомца");
                 Console.WriteLine("5. Просмотр расписания");
-                Console.WriteLine("6. Удаление записи"); 
+                Console.WriteLine("6. Удаление записи");
                 Console.WriteLine("7. Выход");
                 Console.Write("Выберите действие: ");
 
@@ -91,6 +95,10 @@ namespace VeterinaryClinic.ConsoleUserInterface
             }
         }
 
+        /// <summary>
+        /// Настраивает сервисы приложения в зависимости от выбранной технологии
+        /// </summary>
+        /// <param name="useDapper">Флаг использования Dapper вместо Entity Framework</param>
         static void ConfigureServices(bool useDapper)
         {
             var connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\настя\\source\\repos\\VetClinic_Repo\\VtCl\\VeterinaryClinic.ConsoleUserInterface\\VeterinaryClinic.ConsoleUserInterface\\Database_VetCl.mdf;Integrated Security=True";
@@ -129,6 +137,10 @@ namespace VeterinaryClinic.ConsoleUserInterface
             }
         }
 
+        /// <summary>
+        /// Создает базу данных с использованием Entity Framework
+        /// </summary>
+        /// <param name="connectionString">Строка подключения к базе данных</param>
         static void CreateDatabaseWithEF(string connectionString)
         {
             try
@@ -139,7 +151,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
 
                 using (var context = new Context(options))
                 {
-                    Console.WriteLine("🔄 Создание/проверка базы данных...");
+                    Console.WriteLine("Создание/проверка базы данных...");
 
                     // Просто создаем базу
                     context.Database.EnsureCreated();
@@ -150,22 +162,25 @@ namespace VeterinaryClinic.ConsoleUserInterface
                         InitializeVeterinarians(context);
                     }
 
-                    Console.WriteLine("✅ База данных готова к работе!");
+                    Console.WriteLine("База данных готова к работе!");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Ошибка при создании базы: {ex.Message}");
+                Console.WriteLine($"Ошибка при создании базы: {ex.Message}");
                 throw;
             }
         }
 
-        // Метод для инициализации ветеринаров
+        /// <summary>
+        /// Инициализирует базовых ветеринаров в системе
+        /// </summary>
+        /// <param name="context">Контекст базы данных</param>
         static void InitializeVeterinarians(Context context)
         {
             if (context.Veterinarians.Any())
             {
-                Console.WriteLine("✅ Ветеринары уже есть в базе.");
+                Console.WriteLine("Ветеринары уже есть в базе.");
                 return;
             }
 
@@ -188,10 +203,12 @@ namespace VeterinaryClinic.ConsoleUserInterface
             }
 
             context.SaveChanges();
-            Console.WriteLine($"✅ Добавлено {veterinarians.Length} ветеринаров в базу.");
+            Console.WriteLine($"Добавлено {veterinarians.Length} ветеринаров в базу.");
         }
 
-
+        /// <summary>
+        /// Отображает меню управления владельцами
+        /// </summary>
         static void OwnerMenu()
         {
             bool back = false;
@@ -245,6 +262,9 @@ namespace VeterinaryClinic.ConsoleUserInterface
             }
         }
 
+        /// <summary>
+        /// Добавляет нового владельца в систему
+        /// </summary>
         static void AddOwner()
         {
             Console.Write("Введите ФИО: ");
@@ -253,25 +273,31 @@ namespace VeterinaryClinic.ConsoleUserInterface
             string phone = Console.ReadLine();
 
             var owner = _clinicService.CreateOwner(fullName, phone);
-            Console.WriteLine($"✅ Владелец добавлен: {owner}");
+            Console.WriteLine($"Владелец добавлен: {owner}");
         }
 
+        /// <summary>
+        /// Отображает всех владельцев в системе
+        /// </summary>
         static void ShowAllOwners()
         {
             var owners = _clinicService.GetAllOwners();
             if (owners.Count == 0)
             {
-                Console.WriteLine("📭 Владельцев нет.");
+                Console.WriteLine("Владельцев нет.");
                 return;
             }
 
-            Console.WriteLine("\n📋 Список всех владельцев:");
+            Console.WriteLine("\nСписок всех владельцев:");
             foreach (var owner in owners)
             {
-                Console.WriteLine($"ID: {owner.Id} | {owner.FullName} | 📞 {owner.PhoneNumber}");
+                Console.WriteLine($"ID: {owner.Id} | {owner.FullName} | {owner.PhoneNumber}");
             }
         }
 
+        /// <summary>
+        /// Находит владельцев по имени
+        /// </summary>
         static void FindOwnerByName()
         {
             Console.Write("Введите имя для поиска: ");
@@ -280,17 +306,20 @@ namespace VeterinaryClinic.ConsoleUserInterface
             var found = _clinicService.FindOwnersByName(name);
             if (found.Count == 0)
             {
-                Console.WriteLine("❌ Владельцы не найдены.");
+                Console.WriteLine("Владельцы не найдены.");
                 return;
             }
 
-            Console.WriteLine("\n🔍 Найденные владельцы:");
+            Console.WriteLine("\nНайденные владельцы:");
             foreach (var owner in found)
             {
-                Console.WriteLine($"ID: {owner.Id} | {owner.FullName} | 📞 {owner.PhoneNumber}");
+                Console.WriteLine($"ID: {owner.Id} | {owner.FullName} | {owner.PhoneNumber}");
             }
         }
 
+        /// <summary>
+        /// Удаляет владельца и его питомцев из системы
+        /// </summary>
         static void DeleteOwner()
         {
             Console.Write("Введите фамилию владельца для поиска: ");
@@ -299,11 +328,11 @@ namespace VeterinaryClinic.ConsoleUserInterface
             var foundOwners = _clinicService.FindOwnersByName(searchLastName);
             if (foundOwners.Count == 0)
             {
-                Console.WriteLine("❌ Владельцы с такой фамилией не найдены!");
+                Console.WriteLine(" Владельцы с такой фамилией не найдены!");
                 return;
             }
 
-            Console.WriteLine("\n🔍 Найденные владельцы:");
+            Console.WriteLine("\n Найденные владельцы:");
             foreach (var owner in foundOwners)
             {
                 Console.WriteLine($"ID: {owner.Id} | {owner.FullName} ({owner.PhoneNumber})");
@@ -312,21 +341,21 @@ namespace VeterinaryClinic.ConsoleUserInterface
             Console.Write("Введите ID владельца для удаления: ");
             if (!Guid.TryParse(Console.ReadLine(), out Guid deleteOwnerId))
             {
-                Console.WriteLine("❌ Неверный формат ID!");
+                Console.WriteLine(" Неверный формат ID!");
                 return;
             }
 
             var selectedOwner = foundOwners.FirstOrDefault(o => o.Id == deleteOwnerId);
             if (selectedOwner == null)
             {
-                Console.WriteLine("❌ Выбранный ID не соответствует найденным владельцам!");
+                Console.WriteLine(" Выбранный ID не соответствует найденным владельцам!");
                 return;
             }
 
             var pets = _clinicService.GetPetsByOwnerId(deleteOwnerId);
             if (pets.Count > 0)
             {
-                Console.WriteLine($"\n⚠️ У владельца {selectedOwner.FullName} есть питомцы:");
+                Console.WriteLine($"\n У владельца {selectedOwner.FullName} есть питомцы:");
                 foreach (var pet in pets)
                 {
                     Console.WriteLine($"  - {pet.Name} ({pet.Species} - {pet.Breed})");
@@ -343,19 +372,22 @@ namespace VeterinaryClinic.ConsoleUserInterface
             {
                 if (_clinicService.DeleteOwnerWithPets(deleteOwnerId))
                 {
-                    Console.WriteLine("✅ Владелец и питомцы успешно удалены.");
+                    Console.WriteLine(" Владелец и питомцы успешно удалены.");
                 }
                 else
                 {
-                    Console.WriteLine("❌ Ошибка при удалении владельца.");
+                    Console.WriteLine(" Ошибка при удалении владельца.");
                 }
             }
             else
             {
-                Console.WriteLine("❌ Удаление отменено.");
+                Console.WriteLine(" Удаление отменено.");
             }
         }
 
+        /// <summary>
+        /// Отображает меню управления питомцами
+        /// </summary>
         static void PetMenu()
         {
             bool back = false;
@@ -409,6 +441,9 @@ namespace VeterinaryClinic.ConsoleUserInterface
             }
         }
 
+        /// <summary>
+        /// Добавляет нового питомца в систему
+        /// </summary>
         static void AddPet()
         {
             Console.Write("Введите фамилию владельца для поиска: ");
@@ -417,11 +452,11 @@ namespace VeterinaryClinic.ConsoleUserInterface
             var foundOwners = _clinicService.FindOwnersByName(searchLastName);
             if (foundOwners.Count == 0)
             {
-                Console.WriteLine("❌ Владельцы с такой фамилией не найдены!");
+                Console.WriteLine(" Владельцы с такой фамилией не найдены!");
                 return;
             }
 
-            Console.WriteLine("\n🔍 Найденные владельцы:");
+            Console.WriteLine("\n Найденные владельцы:");
             foreach (var owner in foundOwners)
             {
                 Console.WriteLine($"ID: {owner.Id} | {owner.FullName} ({owner.PhoneNumber})");
@@ -430,14 +465,14 @@ namespace VeterinaryClinic.ConsoleUserInterface
             Console.Write("Введите ID владельца: ");
             if (!Guid.TryParse(Console.ReadLine(), out Guid ownerId))
             {
-                Console.WriteLine("❌ Неверный формат ID!");
+                Console.WriteLine(" Неверный формат ID!");
                 return;
             }
 
             var selectedOwner = foundOwners.FirstOrDefault(o => o.Id == ownerId);
             if (selectedOwner == null)
             {
-                Console.WriteLine("❌ Выбранный ID не соответствует найденным владельцам!");
+                Console.WriteLine(" Выбранный ID не соответствует найденным владельцам!");
                 return;
             }
 
@@ -451,24 +486,27 @@ namespace VeterinaryClinic.ConsoleUserInterface
             try
             {
                 var pet = _clinicService.CreatePet(petName, species, breed, ownerId);
-                Console.WriteLine($"✅ Питомец добавлен: {pet}");
+                Console.WriteLine($" Питомец добавлен: {pet}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine("❌ Ошибка при добавлении питомца: " + ex.Message);
+                Console.WriteLine(" Ошибка при добавлении питомца: " + ex.Message);
             }
         }
 
+        /// <summary>
+        /// Отображает всех питомцев в системе
+        /// </summary>
         static void ShowAllPets()
         {
             var pets = _clinicService.GetAllPets();
             if (pets.Count == 0)
             {
-                Console.WriteLine("📭 Питомцев нет.");
+                Console.WriteLine(" Питомцев нет.");
                 return;
             }
 
-            Console.WriteLine("\n📋 Список всех питомцев:");
+            Console.WriteLine("\n Список всех питомцев:");
             foreach (var pet in pets)
             {
                 var owner = _clinicService.FindOwnersByName("").Find(o => o.Id == pet.OwnerId);
@@ -476,6 +514,9 @@ namespace VeterinaryClinic.ConsoleUserInterface
             }
         }
 
+        /// <summary>
+        /// Находит питомцев по владельцу
+        /// </summary>
         static void FindPetsByOwner()
         {
             Console.Write("Введите фамилию владельца для поиска: ");
@@ -484,11 +525,11 @@ namespace VeterinaryClinic.ConsoleUserInterface
             var foundOwners = _clinicService.FindOwnersByName(searchOwnerName);
             if (foundOwners.Count == 0)
             {
-                Console.WriteLine("❌ Владельцы с такой фамилией не найдены!");
+                Console.WriteLine(" Владельцы с такой фамилией не найдены!");
                 return;
             }
 
-            Console.WriteLine("\n🔍 Найденные владельцы:");
+            Console.WriteLine("\n Найденные владельцы:");
             foreach (var owner in foundOwners)
             {
                 Console.WriteLine($"ID: {owner.Id} | {owner.FullName} ({owner.PhoneNumber})");
@@ -497,31 +538,34 @@ namespace VeterinaryClinic.ConsoleUserInterface
             Console.Write("Введите ID владельца: ");
             if (!Guid.TryParse(Console.ReadLine(), out Guid ownerId))
             {
-                Console.WriteLine("❌ Неверный формат ID!");
+                Console.WriteLine(" Неверный формат ID!");
                 return;
             }
 
             var selectedOwner = foundOwners.Find(o => o.Id == ownerId);
             if (selectedOwner == null)
             {
-                Console.WriteLine("❌ Выбранный ID не соответствует найденным владельцам!");
+                Console.WriteLine(" Выбранный ID не соответствует найденным владельцам!");
                 return;
             }
 
             var pets = _clinicService.GetPetsByOwnerId(ownerId);
             if (pets.Count == 0)
             {
-                Console.WriteLine($"📭 У владельца {selectedOwner.FullName} нет питомцев!");
+                Console.WriteLine($" У владельца {selectedOwner.FullName} нет питомцев!");
                 return;
             }
 
-            Console.WriteLine($"\n🐾 Питомцы владельца {selectedOwner.FullName}:");
+            Console.WriteLine($"\n Питомцы владельца {selectedOwner.FullName}:");
             foreach (var pet in pets)
             {
                 Console.WriteLine($"ID: {pet.Id} | {pet.Name} ({pet.Species} - {pet.Breed})");
             }
         }
 
+        /// <summary>
+        /// Удаляет питомца из системы
+        /// </summary>
         static void DeletePet()
         {
             Console.Write("Введите фамилию владельца для поиска: ");
@@ -530,11 +574,11 @@ namespace VeterinaryClinic.ConsoleUserInterface
             var foundOwners = _clinicService.FindOwnersByName(searchOwnerName);
             if (foundOwners.Count == 0)
             {
-                Console.WriteLine("❌ Владельцы с такой фамилией не найдены!");
+                Console.WriteLine(" Владельцы с такой фамилией не найдены!");
                 return;
             }
 
-            Console.WriteLine("\n🔍 Найденные владельцы:");
+            Console.WriteLine("\n Найденные владельцы:");
             foreach (var owner in foundOwners)
             {
                 Console.WriteLine($"ID: {owner.Id} | {owner.FullName} ({owner.PhoneNumber})");
@@ -543,25 +587,25 @@ namespace VeterinaryClinic.ConsoleUserInterface
             Console.Write("Введите ID владельца: ");
             if (!Guid.TryParse(Console.ReadLine(), out Guid ownerId))
             {
-                Console.WriteLine("❌ Неверный формат ID!");
+                Console.WriteLine(" Неверный формат ID!");
                 return;
             }
 
             var selectedOwner = foundOwners.Find(o => o.Id == ownerId);
             if (selectedOwner == null)
             {
-                Console.WriteLine("❌ Выбранный ID не соответствует найденным владельцам!");
+                Console.WriteLine(" Выбранный ID не соответствует найденным владельцам!");
                 return;
             }
 
             var pets = _clinicService.GetPetsByOwnerId(ownerId);
             if (pets.Count == 0)
             {
-                Console.WriteLine($"📭 У владельца {selectedOwner.FullName} нет питомцев для удаления!");
+                Console.WriteLine($" У владельца {selectedOwner.FullName} нет питомцев для удаления!");
                 return;
             }
 
-            Console.WriteLine($"\n🐾 Питомцы владельца {selectedOwner.FullName}:");
+            Console.WriteLine($"\n Питомцы владельца {selectedOwner.FullName}:");
             for (int i = 0; i < pets.Count; i++)
             {
                 var pet = pets[i];
@@ -582,13 +626,17 @@ namespace VeterinaryClinic.ConsoleUserInterface
             if (confirmation == "да" || confirmation == "д" || confirmation == "y" || confirmation == "yes")
             {
                 bool deleted = _clinicService.DeletePet(petToDelete.Id);
-                Console.WriteLine(deleted ? "✅ Питомец успешно удален." : "❌ Ошибка при удалении питомца.");
+                Console.WriteLine(deleted ? " Питомец успешно удален." : " Ошибка при удалении питомца.");
             }
             else
             {
-                Console.WriteLine("❌ Удаление отменено.");
+                Console.WriteLine(" Удаление отменено.");
             }
         }
+
+        /// <summary>
+        /// Отображает меню удаления записи на прием
+        /// </summary>
         static void DeleteAppointmentMenu()
         {
             Console.Clear();
@@ -597,7 +645,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
             Console.Write("Введите дату для просмотра записей (гггг-мм-дд): ");
             if (!DateTime.TryParse(Console.ReadLine(), out DateTime date))
             {
-                Console.WriteLine("❌ Неверный формат даты.");
+                Console.WriteLine("Неверный формат даты.");
                 Console.ReadKey();
                 return;
             }
@@ -611,13 +659,13 @@ namespace VeterinaryClinic.ConsoleUserInterface
 
                 if (appointments.Count == 0)
                 {
-                    Console.WriteLine($"📭 На {date:dd.MM.yyyy} нет записей.");
+                    Console.WriteLine($"На {date:dd.MM.yyyy} нет записей.");
                     Console.ReadKey();
                     return;
                 }
 
                 // Показываем все записи с номерами
-                Console.WriteLine($"\n📅 Записи на {date:dd.MM.yyyy}:\n");
+                Console.WriteLine($"\nЗаписи на {date:dd.MM.yyyy}:\n");
                 var appointmentList = new List<Appointment>();
 
                 int counter = 1;
@@ -629,11 +677,11 @@ namespace VeterinaryClinic.ConsoleUserInterface
                         var pet = _clinicService.GetPet(appointment.PetId);
                         var owner = _clinicService.FindOwnersByName("").FirstOrDefault(o => o.Id == pet?.OwnerId);
 
-                        Console.WriteLine($"{counter}. ⏰ {appointment.AppointmentDate:HH:mm} | 👨‍⚕️ {vet.FullName}");
-                        Console.WriteLine($"   🐾 Питомец: {pet?.Name ?? "Неизвестен"} ({pet?.Species ?? "Неизвестен"} - {pet?.Breed ?? "Неизвестен"})");
-                        Console.WriteLine($"   👤 Владелец: {owner?.FullName ?? "Неизвестен"}");
-                        Console.WriteLine($"   📝 Причина: {appointment.Reason}");
-                        Console.WriteLine($"   🔑 ID записи: {appointment.Id}");
+                        Console.WriteLine($"{counter}.  {appointment.AppointmentDate:HH:mm} |  {vet.FullName}");
+                        Console.WriteLine($"    Питомец: {pet?.Name ?? "Неизвестен"} ({pet?.Species ?? "Неизвестен"} - {pet?.Breed ?? "Неизвестен"})");
+                        Console.WriteLine($"    Владелец: {owner?.FullName ?? "Неизвестен"}");
+                        Console.WriteLine($"    Причина: {appointment.Reason}");
+                        Console.WriteLine($"    ID записи: {appointment.Id}");
                         Console.WriteLine();
 
                         appointmentList.Add(appointment);
@@ -643,7 +691,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
 
                 if (appointmentList.Count == 0)
                 {
-                    Console.WriteLine("📭 Записей не найдено.");
+                    Console.WriteLine(" Записей не найдено.");
                     Console.ReadKey();
                     return;
                 }
@@ -651,14 +699,14 @@ namespace VeterinaryClinic.ConsoleUserInterface
                 Console.Write("Выберите номер записи для удаления (0 - отмена): ");
                 if (!int.TryParse(Console.ReadLine(), out int choice) || choice < 0 || choice > appointmentList.Count)
                 {
-                    Console.WriteLine("❌ Неверный выбор.");
+                    Console.WriteLine(" Неверный выбор.");
                     Console.ReadKey();
                     return;
                 }
 
                 if (choice == 0)
                 {
-                    Console.WriteLine("❌ Удаление отменено.");
+                    Console.WriteLine(" Удаление отменено.");
                     Console.ReadKey();
                     return;
                 }
@@ -668,14 +716,14 @@ namespace VeterinaryClinic.ConsoleUserInterface
                 var selectedOwner = _clinicService.FindOwnersByName("").FirstOrDefault(o => o.Id == selectedPet?.OwnerId);
                 var selectedVet = veterinarians.FirstOrDefault(v => v.Id == selectedAppointment.VeterinarianId);
 
-                Console.WriteLine($"\n⚠️ ВЫ УДАЛЯЕТЕ ЗАПИСЬ:");
-                Console.WriteLine($"   📅 Дата: {selectedAppointment.AppointmentDate:dd.MM.yyyy HH:mm}");
-                Console.WriteLine($"   👨‍⚕️ Врач: {selectedVet?.FullName ?? "Неизвестен"}");
-                Console.WriteLine($"   🐾 Питомец: {selectedPet?.Name ?? "Неизвестен"}");
-                Console.WriteLine($"   👤 Владелец: {selectedOwner?.FullName ?? "Неизвестен"}");
-                Console.WriteLine($"   📝 Причина: {selectedAppointment.Reason}");
+                Console.WriteLine($"\n ВЫ УДАЛЯЕТЕ ЗАПИСЬ:");
+                Console.WriteLine($"    Дата: {selectedAppointment.AppointmentDate:dd.MM.yyyy HH:mm}");
+                Console.WriteLine($"    Врач: {selectedVet?.FullName ?? "Неизвестен"}");
+                Console.WriteLine($"    Питомец: {selectedPet?.Name ?? "Неизвестен"}");
+                Console.WriteLine($"    Владелец: {selectedOwner?.FullName ?? "Неизвестен"}");
+                Console.WriteLine($"    Причина: {selectedAppointment.Reason}");
 
-                Console.Write("\n❓ Вы уверены? (да/нет): ");
+                Console.Write("\n Вы уверены? (да/нет): ");
                 string confirmation = Console.ReadLine()?.ToLower();
 
                 if (confirmation == "да" || confirmation == "д" || confirmation == "y" || confirmation == "yes")
@@ -683,27 +731,30 @@ namespace VeterinaryClinic.ConsoleUserInterface
                     bool success = _clinicService.DeleteAppointment(selectedAppointment.Id);
                     if (success)
                     {
-                        Console.WriteLine("✅ Запись успешно удалена!");
+                        Console.WriteLine(" Запись успешно удалена!");
                     }
                     else
                     {
-                        Console.WriteLine("❌ Ошибка при удалении записи.");
+                        Console.WriteLine(" Ошибка при удалении записи.");
                     }
                 }
                 else
                 {
-                    Console.WriteLine("❌ Удаление отменено.");
+                    Console.WriteLine(" Удаление отменено.");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Ошибка: {ex.Message}");
+                Console.WriteLine($" Ошибка: {ex.Message}");
             }
 
             Console.WriteLine("Нажмите любую клавишу для возврата...");
             Console.ReadKey();
         }
 
+        /// <summary>
+        /// Создает новую запись на прием
+        /// </summary>
         static void CreateAppointment()
         {
             Console.Clear();
@@ -713,7 +764,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
             string ownerName = Console.ReadLine();
             if (string.IsNullOrWhiteSpace(ownerName))
             {
-                Console.WriteLine("❌ ФИО не может быть пустым.");
+                Console.WriteLine(" ФИО не может быть пустым.");
                 Console.ReadKey();
                 return;
             }
@@ -721,7 +772,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
             var owners = _clinicService.FindOwnersByName(ownerName);
             if (owners.Count == 0)
             {
-                Console.WriteLine("❌ Владельцы не найдены.");
+                Console.WriteLine(" Владельцы не найдены.");
                 Console.ReadKey();
                 return;
             }
@@ -733,7 +784,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
             }
             else
             {
-                Console.WriteLine("🔍 Найдено несколько владельцев:");
+                Console.WriteLine(" Найдено несколько владельцев:");
                 for (int i = 0; i < owners.Count; i++)
                 {
                     Console.WriteLine($"{i + 1}. {owners[i].FullName} ({owners[i].PhoneNumber})");
@@ -741,7 +792,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
                 Console.Write("Выберите номер владельца: ");
                 if (!int.TryParse(Console.ReadLine(), out int ownerIndex) || ownerIndex < 1 || ownerIndex > owners.Count)
                 {
-                    Console.WriteLine("❌ Неверный выбор.");
+                    Console.WriteLine(" Неверный выбор.");
                     Console.ReadKey();
                     return;
                 }
@@ -751,7 +802,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
             var pets = _clinicService.GetPetsByOwnerId(selectedOwner.Id);
             if (pets.Count == 0)
             {
-                Console.WriteLine("❌ У владельца нет питомцев.");
+                Console.WriteLine(" У владельца нет питомцев.");
                 Console.ReadKey();
                 return;
             }
@@ -763,14 +814,14 @@ namespace VeterinaryClinic.ConsoleUserInterface
             }
             else
             {
-                Console.WriteLine("🐾 Выберите питомца:");
+                Console.WriteLine(" Выберите питомца:");
                 for (int i = 0; i < pets.Count; i++)
                 {
                     Console.WriteLine($"{i + 1}. {pets[i].Name} ({pets[i].Species} - {pets[i].Breed})");
                 }
                 if (!int.TryParse(Console.ReadLine(), out int petIndex) || petIndex < 1 || petIndex > pets.Count)
                 {
-                    Console.WriteLine("❌ Неверный выбор.");
+                    Console.WriteLine(" Неверный выбор.");
                     Console.ReadKey();
                     return;
                 }
@@ -780,21 +831,21 @@ namespace VeterinaryClinic.ConsoleUserInterface
             Console.Write("Введите дату (гггг-мм-дд): ");
             if (!DateTime.TryParse(Console.ReadLine(), out DateTime date))
             {
-                Console.WriteLine("❌ Неверный формат даты.");
+                Console.WriteLine(" Неверный формат даты.");
                 Console.ReadKey();
                 return;
             }
 
             if (date.Date < DateTime.Today)
             {
-                Console.WriteLine("❌ Нельзя записаться на прошедшую дату.");
+                Console.WriteLine(" Нельзя записаться на прошедшую дату.");
                 Console.ReadKey();
                 return;
             }
 
             if (date.DayOfWeek == DayOfWeek.Sunday)
             {
-                Console.WriteLine("❌ Воскресенье - выходной.");
+                Console.WriteLine(" Воскресенье - выходной.");
                 Console.ReadKey();
                 return;
             }
@@ -802,7 +853,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
             var vet = _clinicService.GetVeterinarianByDay(date.DayOfWeek);
             if (vet == null)
             {
-                Console.WriteLine("❌ Нет врачей в этот день.");
+                Console.WriteLine(" Нет врачей в этот день.");
                 Console.ReadKey();
                 return;
             }
@@ -810,12 +861,12 @@ namespace VeterinaryClinic.ConsoleUserInterface
             var slots = _clinicService.GetAvailableTimeSlots(vet.Id, date);
             if (slots.Count == 0)
             {
-                Console.WriteLine("❌ Нет свободных временных слотов.");
+                Console.WriteLine(" Нет свободных временных слотов.");
                 Console.ReadKey();
                 return;
             }
 
-            Console.WriteLine("⏰ Выберите время:");
+            Console.WriteLine(" Выберите время:");
             for (int i = 0; i < slots.Count; i++)
             {
                 Console.WriteLine($"{i + 1}. {slots[i]:HH:mm}");
@@ -823,7 +874,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
 
             if (!int.TryParse(Console.ReadLine(), out int slotIndex) || slotIndex < 1 || slotIndex > slots.Count)
             {
-                Console.WriteLine("❌ Неверный выбор.");
+                Console.WriteLine(" Неверный выбор.");
                 Console.ReadKey();
                 return;
             }
@@ -846,12 +897,12 @@ namespace VeterinaryClinic.ConsoleUserInterface
                     treatment: "",
                     notes: "");
 
-                Console.WriteLine("✅ Запись успешно создана:");
-                Console.WriteLine($"👤 Владелец: {selectedOwner.FullName}");
-                Console.WriteLine($"🐾 Питомец: {selectedPet.Name}");
-                Console.WriteLine($"👨‍⚕️ Врач: {vet.FullName}");
-                Console.WriteLine($"📅 Дата и время: {selectedTime:dd.MM.yyyy HH:mm}");
-                Console.WriteLine($"📝 Причина: {reason}");
+                Console.WriteLine(" Запись успешно создана:");
+                Console.WriteLine($" Владелец: {selectedOwner.FullName}");
+                Console.WriteLine($" Питомец: {selectedPet.Name}");
+                Console.WriteLine($" Врач: {vet.FullName}");
+                Console.WriteLine($" Дата и время: {selectedTime:dd.MM.yyyy HH:mm}");
+                Console.WriteLine($" Причина: {reason}");
             }
             catch (Exception ex)
             {
@@ -860,6 +911,9 @@ namespace VeterinaryClinic.ConsoleUserInterface
             Console.ReadKey();
         }
 
+        /// <summary>
+        /// Отображает историю визитов питомца
+        /// </summary>
         static void ShowVisitHistory()
         {
             Console.Clear();
@@ -876,38 +930,41 @@ namespace VeterinaryClinic.ConsoleUserInterface
                 var pet = pets.First();
 
                 Console.Clear();
-                Console.WriteLine($"📋 История визитов питомца {pet.Name}:\n");
+                Console.WriteLine($" История визитов питомца {pet.Name}:\n");
 
                 if (history.Count == 0)
                 {
-                    Console.WriteLine("📭 История визитов пуста.");
+                    Console.WriteLine(" История визитов пуста.");
                 }
                 else
                 {
                     foreach (var visit in history)
                     {
-                        Console.WriteLine($"📅 Дата: {visit.VisitDate:dd.MM.yyyy HH:mm}");
-                        Console.WriteLine($"👨‍⚕️ Врач: {visit.VeterinarianName}");
-                        Console.WriteLine($"📝 Причина: {visit.Reason}");
+                        Console.WriteLine($" Дата: {visit.VisitDate:dd.MM.yyyy HH:mm}");
+                        Console.WriteLine($" Врач: {visit.VeterinarianName}");
+                        Console.WriteLine($" Причина: {visit.Reason}");
                         if (!string.IsNullOrEmpty(visit.Diagnosis))
-                            Console.WriteLine($"🩺 Диагноз: {visit.Diagnosis}");
+                            Console.WriteLine($" Диагноз: {visit.Diagnosis}");
                         if (!string.IsNullOrEmpty(visit.Treatment))
-                            Console.WriteLine($"💊 Лечение: {visit.Treatment}");
+                            Console.WriteLine($" Лечение: {visit.Treatment}");
                         if (!string.IsNullOrEmpty(visit.Notes))
-                            Console.WriteLine($"📄 Заметки: {visit.Notes}");
+                            Console.WriteLine($" Заметки: {visit.Notes}");
                         Console.WriteLine(new string('-', 40));
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("❌ Ошибка: " + ex.Message);
+                Console.WriteLine(" Ошибка: " + ex.Message);
             }
 
             Console.WriteLine("Нажмите любую клавишу для возврата...");
             Console.ReadKey();
         }
 
+        /// <summary>
+        /// Отображает расписание врачей на указанную дату
+        /// </summary>
         static void ShowSchedule()
         {
             Console.Clear();
@@ -916,7 +973,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
             Console.Write("Введите дату (гггг-мм-дд): ");
             if (!DateTime.TryParse(Console.ReadLine(), out DateTime date))
             {
-                Console.WriteLine("❌ Неверный формат даты.");
+                Console.WriteLine(" Неверный формат даты.");
                 Console.ReadKey();
                 return;
             }
@@ -927,7 +984,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
                 var appointments = scheduleData.Appointments;
                 var veterinarians = scheduleData.Veterinarians;
 
-                Console.WriteLine($"\n📅 Расписание на {date:dd.MM.yyyy}:\n");
+                Console.WriteLine($"\n Расписание на {date:dd.MM.yyyy}:\n");
 
                 Console.Write("Время     ");
                 foreach (var vet in veterinarians)
@@ -971,12 +1028,11 @@ namespace VeterinaryClinic.ConsoleUserInterface
             }
             catch (Exception ex)
             {
-                Console.WriteLine("❌ Ошибка: " + ex.Message);
+                Console.WriteLine(" Ошибка: " + ex.Message);
             }
 
             Console.WriteLine("Нажмите любую клавишу для возврата...");
             Console.ReadKey();
         }
-
     }
 }

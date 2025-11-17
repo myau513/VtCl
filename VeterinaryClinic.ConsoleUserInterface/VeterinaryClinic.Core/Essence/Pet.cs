@@ -21,6 +21,11 @@ namespace VeterinaryClinic.Core.Essence
             Breed = breed;
             OwnerId = ownerId;
         }
+
+        /// <summary>
+        /// Возвращает строковое представление животного в формате "Имя (Вид - Порода)".
+        /// </summary>
+        /// <returns>Строковое представление животного</returns>
         public override string ToString()
         {
             return $"{Name} ({Species} - {Breed})";

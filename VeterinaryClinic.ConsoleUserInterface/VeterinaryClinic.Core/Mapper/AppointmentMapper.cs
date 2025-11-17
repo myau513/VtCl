@@ -5,8 +5,11 @@ namespace VeterinaryClinic.Core.Mapper
 {
     public static class AppointmentMapper
     {
-
-
+        /// <summary>
+        /// Преобразует сущность Appointment в DTO.
+        /// </summary>
+        /// <param name="entity">Сущность Appointment</param>
+        /// <returns>DTO объект AppointmentDto</returns>
         public static AppointmentDto ToDto(this Appointment entity)
         {
             return new AppointmentDto
@@ -20,6 +23,12 @@ namespace VeterinaryClinic.Core.Mapper
                 Breed = entity.Breed
             };
         }
+
+        /// <summary>
+        /// Преобразует DTO AppointmentDto в сущность Appointment.
+        /// </summary>
+        /// <param name="dto">DTO объект AppointmentDto</param>
+        /// <returns>Сущность Appointment</returns>
         public static Appointment ToDomain(AppointmentDto dto) => new Appointment
         {
             Id = dto.Id,

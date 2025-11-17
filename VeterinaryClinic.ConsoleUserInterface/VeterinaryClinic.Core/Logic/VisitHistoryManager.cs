@@ -9,6 +9,17 @@ namespace VeterinaryClinic.Core.Logic
     {
         private List<VisitHistoryDto> _visitHistory = new List<VisitHistoryDto>();
 
+        /// <summary>
+        /// Создает новую запись в истории посещений
+        /// </summary>
+        /// <param name="petId">Идентификатор питомца</param>
+        /// <param name="veterinarianName">Имя ветеринара</param>
+        /// <param name="visitDate">Дата посещения</param>
+        /// <param name="reason">Причина посещения</param>
+        /// <param name="diagnosis">Диагноз</param>
+        /// <param name="treatment">Лечение</param>
+        /// <param name="notes">Заметки</param>
+        /// <returns>Созданная запись истории посещений</returns>
         public VisitHistoryDto CreateVisitHistory(Guid petId, string veterinarianName, DateTime visitDate,
                                                 string reason, string diagnosis = "", string treatment = "", string notes = "")
         {
@@ -28,8 +39,17 @@ namespace VeterinaryClinic.Core.Logic
             return history;
         }
 
+        /// <summary>
+        /// Возвращает всю историю посещений
+        /// </summary>
+        /// <returns>Список всех записей истории посещений</returns>
         public List<VisitHistoryDto> GetAllVisitHistories() => _visitHistory;
 
+        /// <summary>
+        /// Возвращает историю посещений по питомцу
+        /// </summary>
+        /// <param name="petId">Идентификатор питомца</param>
+        /// <returns>Отсортированный список записей истории посещений питомца</returns>
         public List<VisitHistoryDto> GetVisitHistoryByPet(Guid petId)
         {
             return _visitHistory.Where(v => v.PetId == petId)

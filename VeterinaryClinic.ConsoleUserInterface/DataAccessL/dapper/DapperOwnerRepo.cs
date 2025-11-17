@@ -11,10 +11,11 @@ namespace DataAccessL.dapper
 {
     public class DapperOwnerRepo : IRepository<OwnerDto>
     {
-   
-    
         private readonly string _connectionString;
 
+        /// <summary>
+        /// Статический конструктор для настройки обработчиков типов
+        /// </summary>
         static DapperOwnerRepo()
         {
             SqlMapper.RemoveTypeMap(typeof(Guid));
@@ -22,11 +23,19 @@ namespace DataAccessL.dapper
             SqlMapper.AddTypeHandler(new GuidTypeHandler());
         }
 
+        /// <summary>
+        /// Инициализирует репозиторий с строкой подключения
+        /// </summary>
+        /// <param name="connectionString">Строка подключения к базе данных</param>
         public DapperOwnerRepo(string connectionString)
         {
             _connectionString = connectionString;
         }
 
+        /// <summary>
+        /// Создает новую запись владельца
+        /// </summary>
+        /// <param name="ownerdto">DTO владельца для создания</param>
         public void Create(OwnerDto ownerdto)
         {
             using (var db = new SqlConnection(_connectionString))
@@ -36,11 +45,19 @@ namespace DataAccessL.dapper
             }
         }
 
+        /// <summary>
+        /// Добавляет новую сущность (алиас для Create)
+        /// </summary>
+        /// <param name="item">Добавляемая сущность</param>
         public void Add(OwnerDto item)
         {
             Create(item);
         }
 
+        /// <summary>
+        /// Удаляет запись владельца по идентификатору
+        /// </summary>
+        /// <param name="id">Идентификатор удаляемой записи</param>
         public void Delete(Guid id)
         {
             using (var db = new SqlConnection(_connectionString))
@@ -50,35 +67,50 @@ namespace DataAccessL.dapper
             }
         }
 
+        /// <summary>
+        /// Освобождает ресурсы 
+        /// </summary>
         public void Dispose()
         {
-            // Для Dapper обычно не нужно
         }
 
+        /// <summary>
+        /// Возвращает все записи владельцев
+        /// </summary>
+        /// <returns>Коллекция всех владельцев</returns>
         public IEnumerable<OwnerDto> GetAll()
         {
             using (var db = new SqlConnection(_connectionString))
             {
-                // УБРАЛ CAST - теперь используем обычные запросы
                 return db.Query<OwnerDto>("SELECT Id, FullName, PhoneNumber FROM Owners").ToList();
             }
         }
 
+        /// <summary>
+        /// Находит запись владельца по идентификатору
+        /// </summary>
+        /// <param name="id">Идентификатор владельца</param>
+        /// <returns>Найденный владелец или null</returns>
         public OwnerDto GetById(Guid id)
         {
             using (var db = new SqlConnection(_connectionString))
             {
-                // УБРАЛ CAST - GuidTypeHandler сам разберется с конвертацией
-                return db.Query<OwnerDto>("SELECT Id, FullName, PhoneNumber FROM Owners WHERE Id = @id", 
+                return db.Query<OwnerDto>("SELECT Id, FullName, PhoneNumber FROM Owners WHERE Id = @id",
                     new { id }).FirstOrDefault();
             }
         }
 
+        /// <summary>
+        /// Сохраняет изменения 
+        /// </summary>
         public void Save()
         {
-            // For Dapper, Save is typically not needed
         }
 
+        /// <summary>
+        /// Обновляет существующую запись владельца
+        /// </summary>
+        /// <param name="item">DTO владельца для обновления</param>
         public void Update(OwnerDto item)
         {
             using (var db = new SqlConnection(_connectionString))
@@ -87,7 +119,5 @@ namespace DataAccessL.dapper
                 db.Execute(sqlQuery, item);
             }
         }
-    
-
     }
 }

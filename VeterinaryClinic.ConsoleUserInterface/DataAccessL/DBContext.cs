@@ -10,32 +10,61 @@ namespace DataAccessL
 {
     public class Context : DbContext
     {
+        /// <summary>
+        /// Набор данных назначений
+        /// </summary>
         public DbSet<AppointmentDto> Appointments { set; get; }
+
+        /// <summary>
+        /// Набор данных владельцев
+        /// </summary>
         public DbSet<OwnerDto> Owners { get; set; }
+
+        /// <summary>
+        /// Набор данных питомцев
+        /// </summary>
         public DbSet<PetDto> Pets { get; set; }
+
+        /// <summary>
+        /// Набор данных ветеринаров
+        /// </summary>
         public DbSet<VeterinarianDto> Veterinarians { get; set; }
+
+        /// <summary>
+        /// Набор данных истории посещений
+        /// </summary>
         public DbSet<VisitHistoryDto> VisitHistories { get; set; }
 
+        /// <summary>
+        /// Инициализирует контекст с опциями
+        /// </summary>
+        /// <param name="options">Опции контекста базы данных</param>
         public Context(DbContextOptions<Context> options) : base(options)
         {
         }
 
+        /// <summary>
+        /// Создает базу данных если она не существует
+        /// </summary>
         public void CreateDatabase()
         {
             Database.EnsureCreated();
         }
 
+        /// <summary>
+        /// Настраивает модель базы данных
+        /// </summary>
+        /// <param name="modelBuilder">Построитель модели</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Конфигурация для OwnerDto
             modelBuilder.Entity<OwnerDto>(entity =>
             {
                 entity.HasKey(owner => owner.Id);
                 entity.Property(owner => owner.Id)
-                    .HasColumnType("uniqueidentifier") // Явно указываем тип uniqueidentifier
-                    .HasDefaultValueSql("NEWID()") // Генерация GUID по умолчанию
+                    .HasColumnType("uniqueidentifier") 
+                    .HasDefaultValueSql("NEWID()") 
                     .ValueGeneratedOnAdd();
                 entity.Property(owner => owner.FullName)
                     .IsRequired()
@@ -44,7 +73,7 @@ namespace DataAccessL
                     .HasMaxLength(20);
             });
 
-            // Конфигурация для PetDto
+
             modelBuilder.Entity<PetDto>(entity =>
             {
                 entity.HasKey(pet => pet.Id);
@@ -53,7 +82,7 @@ namespace DataAccessL
                     .HasDefaultValueSql("NEWID()")
                     .ValueGeneratedOnAdd();
                 entity.Property(pet => pet.OwnerId)
-                    .HasColumnType("uniqueidentifier"); // Внешний ключ тоже как uniqueidentifier
+                    .HasColumnType("uniqueidentifier"); 
                 entity.Property(pet => pet.Name)
                     .IsRequired()
                     .HasMaxLength(100);
@@ -63,14 +92,12 @@ namespace DataAccessL
                 entity.Property(pet => pet.Breed)
                     .HasMaxLength(100);
 
-                // Настройка связи с владельцем
                 entity.HasOne<OwnerDto>()
                     .WithMany()
                     .HasForeignKey(pet => pet.OwnerId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // Конфигурация для VeterinarianDto
             modelBuilder.Entity<VeterinarianDto>(entity =>
             {
                 entity.HasKey(veterinarian => veterinarian.Id);
@@ -85,7 +112,6 @@ namespace DataAccessL
                     .HasMaxLength(100);
             });
 
-            // Конфигурация для AppointmentDto
             modelBuilder.Entity<AppointmentDto>(entity =>
             {
                 entity.HasKey(appointment => appointment.Id);
@@ -106,7 +132,6 @@ namespace DataAccessL
                 entity.Property(appointment => appointment.Breed)
                     .HasMaxLength(100);
 
-                // Настройка связей
                 entity.HasOne<PetDto>()
                     .WithMany()
                     .HasForeignKey(appointment => appointment.PetId)
@@ -118,10 +143,10 @@ namespace DataAccessL
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
-            // Конфигурация для VisitHistoryDto
+
             modelBuilder.Entity<VisitHistoryDto>(entity =>
             {
-                entity.ToTable("VisitHistories"); // ДОБАВЬТЕ ЭТУ СТРОКУ
+                entity.ToTable("VisitHistories"); 
 
                 entity.HasKey(visitHistory => visitHistory.Id);
                 entity.Property(visitHistory => visitHistory.Id)
@@ -144,7 +169,6 @@ namespace DataAccessL
                 entity.Property(visitHistory => visitHistory.Notes)
                     .HasMaxLength(2000);
 
-                // Связь с питомцем
                 entity.HasOne<PetDto>()
                     .WithMany()
                     .HasForeignKey(visitHistory => visitHistory.PetId)
@@ -152,10 +176,12 @@ namespace DataAccessL
             });
         }
 
+        /// <summary>
+        /// Удаляет базу данных если она существует
+        /// </summary>
         public void DeleteDatabase()
         {
             Database.EnsureDeleted();
         }
-
     }
 }

@@ -17,6 +17,10 @@ namespace VeterinaryClinic.Core.Essence
             FullName = fullName;
             PhoneNumber = phoneNumber;
         }
+        /// <summary>
+        /// Возвращает строковое представление владельца в формате "Фио (Телефон)".
+        /// </summary>
+        /// <returns>Строковое представление владельца</returns>
         public override string ToString()
         {
             return $"{FullName} ({PhoneNumber})";

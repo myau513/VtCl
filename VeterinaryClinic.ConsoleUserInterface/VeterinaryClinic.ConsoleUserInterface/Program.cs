@@ -27,7 +27,10 @@ namespace VeterinaryClinic.ConsoleUserInterface
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             Console.InputEncoding = System.Text.Encoding.UTF8;
 
-            Console.WriteLine("=== ВЕТЕРИНАРНАЯ КЛИНИКА ===");
+            Console.WriteLine("|\\__/,|   (`\\   === ВЕТЕРИНАРНАЯ КЛИНИКА ===");
+            Console.WriteLine("|_ _  |.--.) )");
+            Console.WriteLine("( T   )     /");
+            Console.WriteLine("(((^_(((/(((_/");
             Console.WriteLine("Выберите технологию работы с данными:");
             Console.WriteLine("1. Entity Framework");
             Console.WriteLine("2. Dapper");
@@ -42,7 +45,10 @@ namespace VeterinaryClinic.ConsoleUserInterface
             while (!exit)
             {
                 Console.Clear();
-                Console.WriteLine("=== ВЕТЕРИНАРНАЯ КЛИНИКА ===");
+                Console.WriteLine("|\\__/,|   (`\\   === ВЕТЕРИНАРНАЯ КЛИНИКА ===");
+                Console.WriteLine("|_ _  |.--.) )");
+                Console.WriteLine("( T   )     /");
+                Console.WriteLine("(((^_(((/(((_/");
                 Console.WriteLine($"Режим: {(useDapper ? "Dapper" : "Entity Framework")}");
                 Console.WriteLine("1. Управление владельцами");
                 Console.WriteLine("2. Управление питомцами");
@@ -74,7 +80,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
                         case "5":
                             ShowSchedule();
                             break;
-                        case "6": // ДОБАВИЛИ НОВЫЙ CASE
+                        case "6": 
                             DeleteAppointmentMenu();
                             break;
                         case "7":
@@ -105,10 +111,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
 
             if (useDapper)
             {
-                // Для Dapper сначала создаем базу через EF
                 CreateDatabaseWithEF(connectionString);
-
-                // Затем настраиваем Dapper репозитории
                 IBaseRepository<OwnerDto> ownerRepo = new DapperOwnerRepo(connectionString);
                 IBaseRepository<PetDto> petRepo = new DapperPetRepo(connectionString);
                 IBaseRepository<VeterinarianDto> vetRepo = new DapperVeterinarianRepo(connectionString);
@@ -119,7 +122,6 @@ namespace VeterinaryClinic.ConsoleUserInterface
             }
             else
             {
-                // Настройка EF репозиториев
                 var options = new DbContextOptionsBuilder<Context>()
                     .UseSqlServer(connectionString)
                     .Options;
@@ -153,10 +155,7 @@ namespace VeterinaryClinic.ConsoleUserInterface
                 {
                     Console.WriteLine("Создание/проверка базы данных...");
 
-                    // Просто создаем базу
                     context.Database.EnsureCreated();
-
-                    // Добавляем ветеринаров если их нет
                     if (!context.Veterinarians.Any())
                     {
                         InitializeVeterinarians(context);
@@ -215,7 +214,10 @@ namespace VeterinaryClinic.ConsoleUserInterface
             while (!back)
             {
                 Console.Clear();
-                Console.WriteLine("=== УПРАВЛЕНИЕ ВЛАДЕЛЬЦАМИ ===");
+                Console.WriteLine("|\\__/,|   (`\\   === УПРАВЛЕНИЕ ВЛАДЕЛЬЦАМИ ===");
+                Console.WriteLine("|_ _  |.--.) )");
+                Console.WriteLine("( T   )     /");
+                Console.WriteLine("(((^_(((/(((_/");
                 Console.WriteLine("1. Добавить владельца");
                 Console.WriteLine("2. Показать всех владельцев");
                 Console.WriteLine("3. Найти владельца по имени");
@@ -394,7 +396,10 @@ namespace VeterinaryClinic.ConsoleUserInterface
             while (!back)
             {
                 Console.Clear();
-                Console.WriteLine("=== УПРАВЛЕНИЕ ПИТОМЦАМИ ===");
+                Console.WriteLine("|\\__/,|   (`\\   === УПРАВЛЕНИЕ ПИТОМЦАМИ ===");
+                Console.WriteLine("|_ _  |.--.) )");
+                Console.WriteLine("( T   )     /");
+                Console.WriteLine("(((^_(((/(((_/");
                 Console.WriteLine("1. Добавить питомца");
                 Console.WriteLine("2. Показать всех питомцев");
                 Console.WriteLine("3. Найти питомцев по владельцу");
@@ -968,7 +973,10 @@ namespace VeterinaryClinic.ConsoleUserInterface
         static void ShowSchedule()
         {
             Console.Clear();
-            Console.WriteLine("=== РАСПИСАНИЕ ВРАЧЕЙ ===");
+            Console.WriteLine("|\\__/,|   (`\\   === РАСПИСАНИЕ ВРАЧЕЙ ===");
+            Console.WriteLine("|_ _  |.--.) )");
+            Console.WriteLine("( T   )     /");
+            Console.WriteLine("(((^_(((/(((_/");
 
             Console.Write("Введите дату (гггг-мм-дд): ");
             if (!DateTime.TryParse(Console.ReadLine(), out DateTime date))
